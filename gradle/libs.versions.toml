@@ -20,6 +20,7 @@ androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecyc
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 androidx-ui = { group = "androidx.compose.ui", name = "ui" }
+compose-material3-ui = { group = "androidx.compose.material3", name = "material3" }
 androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
@@ -38,3 +39,4 @@ google-gms-google-services = { id = "com.google.gms.google-services", version.re
 
 [bundles]
 firebase = ["firebase-bom", "firebase-auth", "firebase-firestore" , "firebase-database"]
+compose = ["androidx-ui", "compose-material3-ui", "androidx-ui-graphics" , "androidx-ui-tooling", "androidx-ui-tooling-preview", "androidx-activity-compose"]
