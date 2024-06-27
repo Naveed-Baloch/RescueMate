@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "380972851208",
+    "project_id": "rescuemate-c1591",
+    "storage_bucket": "rescuemate-c1591.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:380972851208:android:f6d2d79c2842e595f2b1bd",
+        "android_client_info": {
+          "package_name": "com.rescuemate.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBVNkuI4e8d4YmKhDDCxz3WWVEcq_62kQM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
