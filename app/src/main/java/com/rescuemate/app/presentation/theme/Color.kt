@@ -1,4 +1,4 @@
-package com.rescuemate.app.ui.theme
+package com.rescuemate.app.presentation.theme
 import androidx.compose.ui.graphics.Color
 
 val primaryLight = Color(0xFF904B40)

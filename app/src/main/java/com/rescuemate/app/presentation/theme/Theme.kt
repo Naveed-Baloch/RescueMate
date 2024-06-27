@@ -1,4 +1,4 @@
-package com.rescuemate.app.ui.theme
+package com.rescuemate.app.presentation.theme
 
 import android.app.Activity
 import android.os.Build
