@@ -1,18 +1,35 @@
 [versions]
-agp = "8.5.0-rc02"
-kotlin = "1.9.0"
-coreKtx = "1.10.1"
+agp = "8.5.0"
+browser = "1.8.0"
+coilCompose = "2.6.0"
+coreSplashscreen = "1.0.1"
+datastorePreferences = "1.1.1"
+googleAuthLibraryOauth2Http = "1.20.0"
+gson = "2.11.0"
+kotlin = "2.0.0"
+coreKtx = "1.13.1"
 junit = "4.13.2"
-junitVersion = "1.1.5"
-espressoCore = "3.5.1"
-lifecycleRuntimeKtx = "2.6.1"
-activityCompose = "1.8.0"
-composeBom = "2024.04.01"
+junitVersion = "1.2.1"
+espressoCore = "3.6.1"
+kprogresshud = "1.0.0"
+lifecycleRuntimeKtx = "2.8.2"
+activityCompose = "1.9.0"
+composeBom = "2024.06.00"
 googleGmsGoogleServices = "4.4.2"
 firebaseBom = "33.1.1"
+firebaseMessaging = "24.0.0"
+retrofit = "2.11.0"
+hilt = "2.51.1"
+ksp = "2.0.0-1.0.21"
 
 [libraries]
+androidx-browser = { module = "androidx.browser:browser", version.ref = "browser" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
+coil = { group = "io.coil-kt", name = "coil-compose", version.ref = "coilCompose" }
+google-auth-library-oauth2-http = { module = "com.google.auth:google-auth-library-oauth2-http", version.ref = "googleAuthLibraryOauth2Http" }
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -31,12 +48,25 @@ firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.r
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth" }
 firebase-database = { group = "com.google.firebase", name = "firebase-database" }
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore" }
+firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging-ktx", version.ref = "firebaseMessaging"}
+kprogresshud = { module = "io.github.rupinderjeet:kprogresshud", version.ref = "kprogresshud" }
+retrofit2 = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit"}
+retrofit-gson-converter = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit"}
+hilt-android = { group = "com.google.dagger", name = "hilt-android" , version.ref = "hilt"}
+hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler" , version.ref = "hilt"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
-
+ksp = { id = "com.google.devtools.ksp", version.ref ="ksp" }
+hiltAndroid = { id = "com.google.dagger.hilt.android", version.ref ="hilt" }
+kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 [bundles]
 firebase = ["firebase-bom", "firebase-auth", "firebase-firestore" , "firebase-database"]
-compose = ["androidx-ui", "compose-material3-ui", "androidx-ui-graphics" , "androidx-ui-tooling", "androidx-ui-tooling-preview", "androidx-activity-compose"]
+retrofit = ["retrofit2", "retrofit-gson-converter"]
+compose = [
+    "androidx-ui", "compose-material3-ui", "androidx-ui-graphics" ,
+    "androidx-ui-tooling", "androidx-ui-tooling-preview", "androidx-activity-compose", "firebase-messaging"
+]
