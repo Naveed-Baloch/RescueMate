@@ -1,4 +1,4 @@
-package com.bkcoding.garagegurufyp_user.repository.fcm
+package com.rescuemate.app.repository.fcm
 
 data class NotificationReq(
     val message: Message

@@ -1,6 +1,6 @@
 package com.rescuemate.app.network
 
-import com.bkcoding.garagegurufyp_user.repository.fcm.NotificationReq
+import com.rescuemate.app.repository.fcm.NotificationReq
 import retrofit2.http.Body
 import retrofit2.http.Header
 import retrofit2.http.POST

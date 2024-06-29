@@ -19,7 +19,7 @@ class UserRepositoryImpl @Inject constructor(
 ): UserRepository {
     override fun storeUserToDatabase(user: User): Flow<Result<String>> = callbackFlow {
         trySend(Result.Loading)
-        databaseReference.child(FirebaseRef.CUSTOMERS).child(user.userId).setValue(user)
+        databaseReference.child(FirebaseRef.USERS).child(user.userId).setValue(user)
             .addOnSuccessListener {
                 trySend(Result.Success("Data inserted Successfully.."))
             }.addOnFailureListener{
