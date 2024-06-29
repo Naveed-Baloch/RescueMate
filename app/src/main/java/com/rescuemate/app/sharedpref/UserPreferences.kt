@@ -12,7 +12,7 @@ class UserPreferences(context: Context) {
         const val USER_DATA = "user_data"
     }
 
-    private val sharedPreferences: SharedPreferences = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+    private val sharedPreferences: SharedPreferences = context.getSharedPreferences("RescueMate", Context.MODE_PRIVATE)
 
     fun updateUser(user: User) = sharedPreferences.writeObject(USER_DATA, user)
     fun getUser() = sharedPreferences.readObject<User>(USER_DATA)

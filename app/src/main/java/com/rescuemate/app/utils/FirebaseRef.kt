@@ -1,14 +1,17 @@
-package com.bkcoding.garagegurufyp_user.utils
+package com.rescuemate.app.utils
+
+import com.rescuemate.app.dto.Ambulance
 
 object FirebaseRef {
-    const val PROJECT_ID = "garageguru-4528e"
-    const val CUSTOMERS = "Customers"
-    const val GARAGES = "Garages"
-    const val GARAGE_IMAGES = "Garage Images"
+    const val PROJECT_ID = "rescuemate-c1591"
+    const val USERS = "Users"
+    const val LABORATORIES = "Laboratories"
+    const val AMBULANCES = "Ambulances"
+    const val BLOOD_DONORS = "Blood Donors"
+    const val USERS_IMAGES = "Users Images"
+    const val AMBULANCE_IMAGES = "Ambulance Images"
+    const val LABORATORY_IMAGES = "Laboratory Images"
     const val TOKEN = "token"
-    const val CONVERSATIONS = "Conversations"
-    const val MESSAGES = "Messages"
-    const val REQUEST_IMAGES = "Request Images"
-    const val REQUEST = "Request"
+    const val AMBULANCE_REQUESTS = "Ambulance Request"
     const val NOTIFICATIONS = "Notifications"
 }

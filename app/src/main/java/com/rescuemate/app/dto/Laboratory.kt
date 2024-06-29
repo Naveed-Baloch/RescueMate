@@ -5,7 +5,7 @@ data class Laboratory(
     val lat: String,
     val lng: String,
     val city: String,
-    val images: List<String>,
+    val image: String,
     val tests: List<LaboratoryTest>
 )
 
