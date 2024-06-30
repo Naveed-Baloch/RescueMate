@@ -83,7 +83,6 @@ private fun SignUpScreenContent(
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold, textAlign = TextAlign.Center,
             modifier = Modifier
-
         )
         Spacer(modifier = Modifier.height(5.dp))
         Box(

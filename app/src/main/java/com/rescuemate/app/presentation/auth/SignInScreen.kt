@@ -82,7 +82,6 @@ private fun SignInScreenContent(
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold, textAlign = TextAlign.Center,
             modifier = Modifier
-
         )
         Spacer(modifier = Modifier.height(20.dp))
         Text(
