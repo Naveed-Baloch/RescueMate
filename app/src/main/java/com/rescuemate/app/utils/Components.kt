@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -165,8 +166,7 @@ fun ActionButton(
             )
             .clip(RoundedCornerShape(5.dp))
             .background(Color.Black.copy(alpha = 0.06f))
-            .height(150.dp)
-            .width(170.dp)
+            .size(150.dp)
             .clickableWithOutRipple { onClick() },
         contentAlignment = Alignment.Center
     ) {

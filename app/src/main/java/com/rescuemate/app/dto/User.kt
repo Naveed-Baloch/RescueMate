@@ -1,7 +1,10 @@
 package com.rescuemate.app.dto
 
+import android.net.Uri
 import android.os.Parcelable
+import com.google.firebase.database.Exclude
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 
 enum class UserType {
     Patient, AmbulanceOwner, Donor, LaboratoryOwner;
@@ -13,14 +16,15 @@ enum class UserType {
         LaboratoryOwner -> "Laboratory Owner"
     }
 }
-
+@Serializable
 @Parcelize
 data class User(
-    val userId: String,
+    val userId: String = "",
     val name: String,
     val email: String,
-    val city: String,
-    val cnic: String,
+    @get:Exclude val profileUri: String,
+    val profilePicUrl: String = "",
+    val cnic: String = "",
     val userType: UserType,
     val password: String,
     val phoneNumber: String

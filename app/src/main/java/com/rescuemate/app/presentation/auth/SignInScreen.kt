@@ -1,5 +1,6 @@
 package com.rescuemate.app.presentation.auth
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -24,14 +25,17 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -40,23 +44,71 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.bkcoding.garagegurufyp_user.utils.isValidEmail
 import com.rescuemate.app.R
+import com.rescuemate.app.extensions.clickableWithOutRipple
+import com.rescuemate.app.extensions.isVisible
+import com.rescuemate.app.extensions.progressBar
+import com.rescuemate.app.extensions.showToast
+import com.rescuemate.app.navigation.Routes
 import com.rescuemate.app.presentation.theme.RescueMateTheme
+import com.rescuemate.app.presentation.viewmodel.UserStorageVM
+import com.rescuemate.app.presentation.viewmodel.UserViewModel
+import com.rescuemate.app.repository.Result
 import com.rescuemate.app.utils.CustomEditText
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
-fun SignInScreen() {
+fun SignInScreen(
+    navHostController: NavHostController,
+    userViewModel: UserViewModel = hiltViewModel(),
+    userStorageVM: UserStorageVM = hiltViewModel()
+) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+//    var keepShowingLoading by remember{ mutableStateOf(false) }
+//    val progressBar = remember { context.progressBar() }
+//
+//    LaunchedEffect(key1 = userViewModel.isLoading) {
+//        if(!userViewModel.isLoading) delay(1000)
+//        keepShowingLoading = userViewModel.isLoading
+//        progressBar.isVisible(keepShowingLoading)
+//    }
+
     SignInScreenContent(
-        onSign = {},
-        onSignUp = {}
+        onSignIn = { email, password ->
+            scope.launch {
+                userViewModel.login(email = email, password = password).collect{
+                    when(it) {
+                        is Result.Failure -> {
+                            // clear the preferences
+                            context.showToast(it.exception.message ?: "Something went Wrong")
+                        }
+                        is Result.Success -> {
+                            // get User from DB
+                            // set the User in Shared Preference
+
+                        }
+                        else -> {}
+                    }
+
+                }
+            }
+
+        },
+        onSignUp = {
+
+            navHostController.navigate(Routes.SignUpScreen)
+        }
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SignInScreenContent(
-    onSign: () -> Unit,
+    onSignIn: (String, String) -> Unit,
     onSignUp: () -> Unit
 ) {
     var email by remember { mutableStateOf("") }
@@ -66,15 +118,15 @@ private fun SignInScreenContent(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
-            .padding(horizontal = 30.dp)
+            .padding(horizontal = 20.dp)
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
-            painter = painterResource(id = R.mipmap.ic_launcher),
+            painter = painterResource(id = R.drawable.ic_rescue),
             contentDescription = "",
-            modifier = Modifier.size(200.dp)
+            modifier = Modifier.size(150.dp)
         )
         Spacer(modifier = Modifier.height(20.dp))
         Text(
@@ -86,12 +138,12 @@ private fun SignInScreenContent(
         Spacer(modifier = Modifier.height(20.dp))
         Text(
             text = "Email",
-            style = MaterialTheme.typography.titleLarge.copy(Color.Black.copy(alpha = 0.7f)),
+            style = MaterialTheme.typography.titleMedium.copy(Color.Black.copy(alpha = 0.7f)),
             modifier = Modifier
                 .fillMaxWidth()
 
         )
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(5.dp))
         CustomEditText(
             value = email,
             label = "Enter your email",
@@ -101,13 +153,13 @@ private fun SignInScreenContent(
             }
         )
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(10.dp))
         Text(
             text = "Password",
-            style = MaterialTheme.typography.titleLarge.copy(Color.Black.copy(alpha = 0.7f)),
+            style = MaterialTheme.typography.titleMedium.copy(Color.Black.copy(alpha = 0.7f)),
             modifier = Modifier.fillMaxWidth()
         )
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(5.dp))
         CustomEditText(
             value = password,
             label = "Enter your password",
@@ -129,7 +181,12 @@ private fun SignInScreenContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(10.dp))
-                .background(Color.Red),
+                .background(Color.Red)
+                .clickableWithOutRipple {
+                    if (password.isNotEmpty() && isValidEmail(email)) {
+                        onSignIn(email, password)
+                    }
+                },
             contentAlignment = Alignment.Center
         ) {
             Text(
@@ -143,8 +200,12 @@ private fun SignInScreenContent(
         Spacer(modifier = Modifier.height(30.dp))
         Text(
             text = "Don't have a account? SignUp",
-            style = MaterialTheme.typography.titleLarge.copy(Color.Red),
+            style = MaterialTheme.typography.titleLarge.copy(Color.Red), textAlign = TextAlign.Center,
             modifier = Modifier
+                .fillMaxWidth()
+                .clickableWithOutRipple {
+                    onSignUp()
+                }
         )
     }
 }
@@ -153,6 +214,6 @@ private fun SignInScreenContent(
 @Composable
 fun SignInScreenPreview() {
     RescueMateTheme {
-        SignInScreen()
+        SignInScreenContent(onSignIn = {_,_->}, onSignUp = {})
     }
 }

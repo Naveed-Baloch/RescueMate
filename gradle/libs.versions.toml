@@ -6,6 +6,7 @@ coreSplashscreen = "1.0.1"
 datastorePreferences = "1.1.1"
 googleAuthLibraryOauth2Http = "1.20.0"
 gson = "2.11.0"
+hiltNavigationCompose = "1.1.0"
 kotlin = "2.0.0"
 coreKtx = "1.13.1"
 junit = "4.13.2"
@@ -18,17 +19,22 @@ composeBom = "2024.06.00"
 googleGmsGoogleServices = "4.4.2"
 firebaseBom = "33.1.1"
 firebaseMessaging = "24.0.0"
+lifecycleViewmodelCompose = "2.7.0"
 loggingInterceptor = "5.0.0-alpha.3"
 retrofit = "2.11.0"
 hilt = "2.51.1"
 ksp = "2.0.0-1.0.21"
 firebaseStorageKtx = "21.0.0"
+navigationCompose = "2.8.0-alpha08"
+serialization = "1.6.3"
 
 [libraries]
 androidx-browser = { module = "androidx.browser:browser", version.ref = "browser" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
+androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
+androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }
 coil = { group = "io.coil-kt", name = "coil-compose", version.ref = "coilCompose" }
 google-auth-library-oauth2-http = { module = "com.google.auth:google-auth-library-oauth2-http", version.ref = "googleAuthLibraryOauth2Http" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
@@ -58,6 +64,8 @@ retrofit-gson-converter = { group = "com.squareup.retrofit2", name = "converter-
 hilt-android = { group = "com.google.dagger", name = "hilt-android" , version.ref = "hilt"}
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler" , version.ref = "hilt"}
 firebase-storage-ktx = { group = "com.google.firebase", name = "firebase-storage-ktx", version.ref = "firebaseStorageKtx" }
+androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -66,7 +74,9 @@ google-gms-google-services = { id = "com.google.gms.google-services", version.re
 ksp = { id = "com.google.devtools.ksp", version.ref ="ksp" }
 hiltAndroid = { id = "com.google.dagger.hilt.android", version.ref ="hilt" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+
 [bundles]
 firebase = ["firebase-bom", "firebase-auth", "firebase-firestore" , "firebase-database"]
 retrofit = ["retrofit2", "retrofit-gson-converter"]

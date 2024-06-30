@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.MaterialTheme
@@ -25,7 +26,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.rescuemate.app.R
+import com.rescuemate.app.dto.User
 import com.rescuemate.app.dto.UserType
 import com.rescuemate.app.extensions.clickableWithOutRipple
 import com.rescuemate.app.presentation.ambulance.AmbulanceDashBoardScreen
@@ -33,10 +37,15 @@ import com.rescuemate.app.presentation.blooddonor.BloodDonorDashBoardScreen
 import com.rescuemate.app.presentation.laboratory.LaboratoryDashBoardScreen
 import com.rescuemate.app.presentation.patient.PatientDashboardScreen
 import com.rescuemate.app.presentation.theme.primaryColor
+import com.rescuemate.app.presentation.viewmodel.UserStorageVM
 
 @Composable
-fun DashboardScreen() {
-    DashboardScreenContent(UserType.LaboratoryOwner)
+fun DashboardScreen(
+    navHostController: NavHostController,
+    userStorageVM: UserStorageVM = hiltViewModel()
+) {
+    val user = userStorageVM.user ?:  return
+    DashboardScreenContent(user.userType)
 }
 
 @Composable
@@ -45,8 +54,9 @@ fun DashboardScreenContent(userType: UserType) {
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
+            .statusBarsPadding()
     ) {
-        TopBarContent(userType = userType, modifier = Modifier.align(Alignment.TopCenter))
+        TopBarContent(userType = userType, modifier = Modifier.align(Alignment.TopCenter).padding(top = 20.dp))
         MainContent(userType = userType, modifier = Modifier.align(Alignment.Center))
         BottomNavBar(userType = userType, modifier = Modifier.align(Alignment.BottomCenter))
     }
@@ -95,7 +105,7 @@ fun TopBarContent(userType: UserType, modifier: Modifier = Modifier) {
 
                     }
             )
-            Spacer(modifier = Modifier.width(5.dp))
+            Spacer(modifier = Modifier.width(2.dp))
             Column {
                 Text(
                     text = "Hassan Ashfaq", // TODO Add current User Name
@@ -133,7 +143,6 @@ fun TopBarContent(userType: UserType, modifier: Modifier = Modifier) {
                     modifier = Modifier
                 )
             }
-            Spacer(modifier = Modifier.width(5.dp))
             Image(
                 painter = painterResource(id = R.drawable.ic_map_pin),
                 contentDescription = "",
@@ -185,5 +194,5 @@ fun BottomNavBar(userType: UserType, modifier: Modifier = Modifier) {
 @Preview
 @Composable
 fun DashboardScreenPreview() {
-    DashboardScreen()
+    DashboardScreenContent(userType = UserType.Patient)
 }
