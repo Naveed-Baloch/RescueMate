@@ -1,6 +1,6 @@
 package com.rescuemate.app.presentation.auth
 
-import android.util.Log
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -14,16 +14,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -46,8 +40,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.bkcoding.garagegurufyp_user.utils.isValidEmail
+import com.rescuemate.app.utils.isValidEmail
 import com.rescuemate.app.R
+import com.rescuemate.app.dto.User
+import com.rescuemate.app.dto.UserType
 import com.rescuemate.app.extensions.clickableWithOutRipple
 import com.rescuemate.app.extensions.isVisible
 import com.rescuemate.app.extensions.progressBar
@@ -58,6 +54,9 @@ import com.rescuemate.app.presentation.viewmodel.UserStorageVM
 import com.rescuemate.app.presentation.viewmodel.UserViewModel
 import com.rescuemate.app.repository.Result
 import com.rescuemate.app.utils.CustomEditText
+import com.rescuemate.app.utils.UserTypeDropdown
+import com.rescuemate.app.utils.getFirebaseRefFromUserType
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -69,48 +68,75 @@ fun SignInScreen(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-//    var keepShowingLoading by remember{ mutableStateOf(false) }
-//    val progressBar = remember { context.progressBar() }
-//
-//    LaunchedEffect(key1 = userViewModel.isLoading) {
-//        if(!userViewModel.isLoading) delay(1000)
-//        keepShowingLoading = userViewModel.isLoading
-//        progressBar.isVisible(keepShowingLoading)
-//    }
+    var keepShowingLoading by remember{ mutableStateOf(false) }
+    val progressBar = remember { context.progressBar() }
+
+    LaunchedEffect(key1 = userViewModel.isLoading) {
+        if(!userViewModel.isLoading) delay(1000)
+        keepShowingLoading = userViewModel.isLoading
+        progressBar.isVisible(keepShowingLoading)
+    }
 
     SignInScreenContent(
-        onSignIn = { email, password ->
+        onSignIn = { email, password , userType ->
             scope.launch {
                 userViewModel.login(email = email, password = password).collect{
                     when(it) {
                         is Result.Failure -> {
-                            // clear the preferences
+                            userStorageVM.removeUserData()
                             context.showToast(it.exception.message ?: "Something went Wrong")
                         }
                         is Result.Success -> {
-                            // get User from DB
-                            // set the User in Shared Preference
-
+                            val userId = it.data
+                            fetchUserDetails(
+                                scope = scope, userViewModel = userViewModel, context = context,
+                                userId = userId, userType = userType
+                            ) { user ->
+                                progressBar.dismiss()
+                                userStorageVM.setUser(user = user)
+                                navHostController.navigate(Routes.DashBoardScreen) {
+                                    popUpTo(navHostController.graph.id)
+                                }
+                            }
                         }
                         else -> {}
                     }
-
                 }
             }
-
         },
         onSignUp = {
-
             navHostController.navigate(Routes.SignUpScreen)
         }
     )
 }
 
+fun fetchUserDetails(
+    scope: CoroutineScope,
+    userViewModel: UserViewModel,
+    context: Context,
+    userId: String,
+    userType: UserType,
+    onSuccessfulLogin: (User) -> Unit
+) {
+    val dbNodeRef = getFirebaseRefFromUserType(userType =userType)
+    scope.launch {
+        userViewModel.fetchUserDetails(userId = userId, dbNodeRef = dbNodeRef).collect{
+            when(it) {
+                is Result.Failure -> { context.showToast(it.exception.message ?: "Something went Wrong") }
+                is Result.Success -> {
+                    onSuccessfulLogin(it.data)
+                } else -> {}
+            }
+        }
+    }
+}
+
 @Composable
 private fun SignInScreenContent(
-    onSignIn: (String, String) -> Unit,
+    onSignIn: (String, String, UserType) -> Unit,
     onSignUp: () -> Unit
 ) {
+    var userType by remember { mutableStateOf<UserType?>(null) }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisibility by remember { mutableStateOf(false) }
@@ -176,6 +202,17 @@ private fun SignInScreenContent(
                 }
             },
         )
+        Spacer(modifier = Modifier.height(5.dp))
+        Text(
+            text = "Login as a?",
+            style = MaterialTheme.typography.titleMedium.copy(Color.Black.copy(alpha = 0.7f)),
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        UserTypeDropdown(
+            modifier = Modifier.fillMaxWidth(),
+            onUserTypeSelected = { userType = it }
+        )
         Spacer(modifier = Modifier.height(20.dp))
         Box(
             modifier = Modifier
@@ -183,8 +220,8 @@ private fun SignInScreenContent(
                 .clip(RoundedCornerShape(10.dp))
                 .background(Color.Red)
                 .clickableWithOutRipple {
-                    if (password.isNotEmpty() && isValidEmail(email)) {
-                        onSignIn(email, password)
+                    if (password.isNotEmpty() && isValidEmail(email) && userType != null) {
+                        onSignIn(email, password, userType!!)
                     }
                 },
             contentAlignment = Alignment.Center
@@ -214,6 +251,6 @@ private fun SignInScreenContent(
 @Composable
 fun SignInScreenPreview() {
     RescueMateTheme {
-        SignInScreenContent(onSignIn = {_,_->}, onSignUp = {})
+        SignInScreenContent(onSignIn = {_,_,_->}, onSignUp = {})
     }
 }

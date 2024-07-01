@@ -53,7 +53,7 @@ class FcmRepositoryImpl @Inject constructor(
 
     override fun updateFcmToken(token: String, user: User) {
         val userId = user.userId
-        val userDbRef = FirebaseRef.USERS
+        val userDbRef = FirebaseRef.PATIENTS
         databaseReference.child(userDbRef).child(userId).child(FirebaseRef.TOKEN).setValue(token)
     }
 

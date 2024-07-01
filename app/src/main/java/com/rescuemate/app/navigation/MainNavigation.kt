@@ -1,20 +1,20 @@
 package com.rescuemate.app.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavBackStackEntry
-import androidx.navigation.compose.NavHost
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
-import com.rescuemate.app.dto.User
 import com.rescuemate.app.presentation.SplashScreen
 import com.rescuemate.app.presentation.auth.SignInScreen
 import com.rescuemate.app.presentation.auth.SignUpScreen
+import com.rescuemate.app.presentation.blooddonor.BloodDonorScreen
+import com.rescuemate.app.presentation.blooddonor.BloodDonorsScreen
+import com.rescuemate.app.presentation.blooddonor.BloodRequestScreen
 import com.rescuemate.app.presentation.dashboard.DashboardScreen
-import kotlin.reflect.typeOf
 
 @Composable
-fun MainNavigation(navController: NavHostController){
+fun MainNavigation(navController: NavHostController) {
     NavHost(
         navController = navController,
         startDestination = Routes.SplashScreen
@@ -28,14 +28,26 @@ fun MainNavigation(navController: NavHostController){
         }
 
         composable<Routes.SignUpScreen> {
-           SignUpScreen(navController)
+            SignUpScreen(navController)
         }
 
-        composable<Routes.DashBoardScreen>(
-            typeMap = mapOf(typeOf<User>() to NavUserType)
-        ) { backStackEntry ->
-            val args = backStackEntry.toRoute<Routes.DashBoardScreen>()
+        composable<Routes.DashBoardScreen> {
             DashboardScreen(navHostController = navController)
+        }
+
+        composable<Routes.BloodDonorsScreen> { backStackEntry ->
+            val args: Routes.BloodDonorsScreen = backStackEntry.toRoute()
+            val city = args.city
+            val bloodGroup = args.bloodGroup
+            BloodDonorsScreen(navController = navController, bloodGroup = bloodGroup, city = city)
+        }
+
+        composable<Routes.BloodDonorScreen> {
+            BloodDonorScreen(navHostController = navController)
+        }
+
+        composable<Routes.BloodRequestScreen> {
+            BloodRequestScreen(navHostController = navController)
         }
 
     }

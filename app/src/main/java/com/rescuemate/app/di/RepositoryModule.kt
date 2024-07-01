@@ -3,6 +3,8 @@ package com.rescuemate.app.di
 import com.bkcoding.garagegurufyp_user.repository.fcm.FcmRepositoryImpl
 import com.rescuemate.app.repository.auth.AuthRepository
 import com.rescuemate.app.repository.auth.AuthRepositoryImpl
+import com.rescuemate.app.repository.blood.BloodRepository
+import com.rescuemate.app.repository.blood.BloodRepositoryImpl
 import com.rescuemate.app.repository.fcm.FcmRepository
 import com.rescuemate.app.repository.user.UserRepository
 import com.rescuemate.app.repository.user.UserRepositoryImpl
@@ -27,4 +29,7 @@ abstract class RepositoryModule {
     @Singleton
     abstract fun providesFcmRepository(repo: FcmRepositoryImpl): FcmRepository
 
+    @Binds
+    @Singleton
+    abstract fun providesBloodRepository(repo: BloodRepositoryImpl): BloodRepository
 }

@@ -6,15 +6,15 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -34,14 +34,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.bkcoding.garagegurufyp_user.utils.isValidEmail
 import com.rescuemate.app.dto.UserType
 import com.rescuemate.app.extensions.clickableWithOutRipple
 
@@ -91,7 +89,7 @@ fun UserTypeDropdown(
     onUserTypeSelected: (UserType) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
-    var dropDownText by remember { mutableStateOf("Select user type") }
+    var dropDownText by remember { mutableStateOf("Select you are") }
 
     Box(
         modifier = modifier
@@ -184,6 +182,32 @@ fun ActionButton(
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 10.dp)
                 .widthIn(max = 200.dp),
+            overflow = TextOverflow.Ellipsis
+        )
+    }
+}
+
+@Composable
+fun TopBar(text: String,modifier: Modifier = Modifier, onBack: () -> Unit) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = Icons.Default.ArrowBack,
+            tint = Color.Red, modifier = Modifier
+                .size(30.dp)
+                .clickableWithOutRipple {
+                    onBack()
+                },
+            contentDescription = ""
+        )
+        Text(
+            text = text,
+            style = MaterialTheme.typography.headlineSmall,
+            maxLines = 2,
+            fontWeight = FontWeight.Bold, textAlign = TextAlign.Center,
+            modifier = Modifier.padding(start = 10.dp),
             overflow = TextOverflow.Ellipsis
         )
     }

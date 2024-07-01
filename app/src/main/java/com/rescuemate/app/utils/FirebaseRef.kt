@@ -1,10 +1,10 @@
 package com.rescuemate.app.utils
 
-import com.rescuemate.app.dto.Ambulance
+import com.rescuemate.app.dto.UserType
 
 object FirebaseRef {
     const val PROJECT_ID = "rescuemate-c1591"
-    const val USERS = "Users"
+    const val PATIENTS = "Users"
     const val LABORATORIES = "Laboratories"
     const val AMBULANCES = "Ambulances"
     const val BLOOD_DONORS = "Blood Donors"
@@ -14,4 +14,11 @@ object FirebaseRef {
     const val TOKEN = "token"
     const val AMBULANCE_REQUESTS = "Ambulance Request"
     const val NOTIFICATIONS = "Notifications"
+}
+
+fun getFirebaseRefFromUserType(userType: UserType) = when (userType) {
+    UserType.Patient -> FirebaseRef.PATIENTS
+    UserType.AmbulanceOwner -> FirebaseRef.AMBULANCES
+    UserType.Donor -> FirebaseRef.BLOOD_DONORS
+    UserType.LaboratoryOwner -> FirebaseRef.LABORATORIES
 }

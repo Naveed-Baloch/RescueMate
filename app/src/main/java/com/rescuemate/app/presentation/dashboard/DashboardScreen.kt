@@ -14,24 +14,32 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
 import com.rescuemate.app.R
 import com.rescuemate.app.dto.User
 import com.rescuemate.app.dto.UserType
 import com.rescuemate.app.extensions.clickableWithOutRipple
+import com.rescuemate.app.navigation.Routes
 import com.rescuemate.app.presentation.ambulance.AmbulanceDashBoardScreen
 import com.rescuemate.app.presentation.blooddonor.BloodDonorDashBoardScreen
 import com.rescuemate.app.presentation.laboratory.LaboratoryDashBoardScreen
@@ -42,33 +50,55 @@ import com.rescuemate.app.presentation.viewmodel.UserStorageVM
 @Composable
 fun DashboardScreen(
     navHostController: NavHostController,
-    userStorageVM: UserStorageVM = hiltViewModel()
+    userStorageVM: UserStorageVM = hiltViewModel(),
 ) {
-    val user = userStorageVM.user ?:  return
-    DashboardScreenContent(user.userType)
+    val user = userStorageVM.user ?: return
+    DashboardScreenContent(
+        navHostController = navHostController,
+        user = user,
+        actionLogout = {
+            userStorageVM.removeUserData()
+            navHostController.navigate(Routes.SignInScreen) {
+                popUpTo(navHostController.graph.id)
+            }
+        },
+        actionProfile = {
+
+        }
+    )
 }
 
 @Composable
-fun DashboardScreenContent(userType: UserType) {
+fun DashboardScreenContent(user: User, actionLogout: () -> Unit, actionProfile: () -> Unit, navHostController: NavHostController) {
+    var contentState by remember { mutableStateOf(true) } // Add Better Approach in Free Time
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
             .statusBarsPadding()
     ) {
-        TopBarContent(userType = userType, modifier = Modifier.align(Alignment.TopCenter).padding(top = 20.dp))
-        MainContent(userType = userType, modifier = Modifier.align(Alignment.Center))
-        BottomNavBar(userType = userType, modifier = Modifier.align(Alignment.BottomCenter))
+        TopBarContent(user = user, modifier = Modifier
+            .align(Alignment.TopCenter)
+            .padding(top = 20.dp))
+        MainContent(navHostController = navHostController, contentState = contentState , user = user, modifier = Modifier.align(Alignment.Center))
+        BottomNavBar(
+            modifier = Modifier.align(Alignment.BottomCenter),
+            actionLogout = actionLogout,
+            actionProfile = actionProfile,
+            actionHome = {
+                contentState = !contentState
+            }
+        )
     }
 
 }
 
 @Composable
-fun MainContent(userType: UserType, modifier: Modifier) {
+fun MainContent(user: User, modifier: Modifier, contentState: Boolean, navHostController: NavHostController) {
     Box(modifier = modifier) {
-        when (userType) {
+        when (user.userType) {
             UserType.Patient -> {
-                PatientDashboardScreen()
+                PatientDashboardScreen(contentState = contentState, navHostController = navHostController)
             }
 
             UserType.AmbulanceOwner -> {
@@ -76,7 +106,7 @@ fun MainContent(userType: UserType, modifier: Modifier) {
             }
 
             UserType.Donor -> {
-                BloodDonorDashBoardScreen()
+                BloodDonorDashBoardScreen(user = user, navHostController = navHostController)
             }
 
             UserType.LaboratoryOwner -> {
@@ -87,7 +117,7 @@ fun MainContent(userType: UserType, modifier: Modifier) {
 }
 
 @Composable
-fun TopBarContent(userType: UserType, modifier: Modifier = Modifier) {
+fun TopBarContent(user: User, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -96,19 +126,22 @@ fun TopBarContent(userType: UserType, modifier: Modifier = Modifier) {
     ) {
 
         Row {
-            Image(
-                painter = painterResource(id = R.drawable.ic_profile),
+            AsyncImage(
+                model = user.profilePicUrl,
                 contentDescription = "",
+                placeholder = painterResource(id = R.drawable.ic_profile),
+                error = painterResource(id = R.drawable.ic_profile),
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .size(40.dp)
-                    .clickableWithOutRipple {
-
-                    }
+                    .size(50.dp)
+                    .clip(CircleShape)
+                    .clickableWithOutRipple { }
             )
+
             Spacer(modifier = Modifier.width(2.dp))
             Column {
                 Text(
-                    text = "Hassan Ashfaq", // TODO Add current User Name
+                    text = user.name,
                     style = MaterialTheme.typography.titleMedium,
                     maxLines = 1,
                     fontWeight = FontWeight.Bold, textAlign = TextAlign.Center,
@@ -155,11 +188,11 @@ fun TopBarContent(userType: UserType, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun BottomNavBar(userType: UserType, modifier: Modifier = Modifier) {
+fun BottomNavBar(modifier: Modifier = Modifier, actionLogout: () -> Unit, actionProfile: () -> Unit, actionHome: () -> Unit) {
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(bottom = 20.dp),
+            .padding(bottom = 30.dp),
         horizontalArrangement = Arrangement.SpaceAround
     ) {
 
@@ -168,9 +201,7 @@ fun BottomNavBar(userType: UserType, modifier: Modifier = Modifier) {
             contentDescription = "",
             modifier = Modifier
                 .size(40.dp)
-                .clickableWithOutRipple {
-
-                }
+                .clickableWithOutRipple { actionProfile() }
         )
 
         Image(
@@ -178,21 +209,28 @@ fun BottomNavBar(userType: UserType, modifier: Modifier = Modifier) {
             contentDescription = "",
             modifier = Modifier
                 .size(40.dp)
-                .clickableWithOutRipple { }
+                .clickableWithOutRipple { actionHome() }
         )
         Image(
-            painter = painterResource(id = R.drawable.ic_notification),
+            painter = painterResource(id = R.drawable.ic_logout),
             contentDescription = "",
             modifier = Modifier
                 .size(40.dp)
-                .clickableWithOutRipple { }
+                .clickableWithOutRipple { actionLogout() }
         )
     }
 }
 
 
-@Preview
-@Composable
-fun DashboardScreenPreview() {
-    DashboardScreenContent(userType = UserType.Patient)
-}
+//@Preview
+//@Composable
+//fun DashboardScreenPreview() {
+//    val user = User(
+//        userId = "Rescue Mate",
+//        name = "name",
+//        email = "email",
+//        profilePicUrl = "https://firebasestorage.googleapis.com/v0/b/rescuemate-c1591.appspot.com/o/Users%2FuWO5rYodBORJ2ir3OLHZaalP8kI2?alt=media&token=cf8b6a80-f0cf-450b-b7d3-591e35cdf142",
+//        userType = UserType.Patient,
+//    )
+//    DashboardScreenContent(user = user, actionLogout = {}, actionProfile = {}, navHostController = navHostController)
+//}

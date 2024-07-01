@@ -16,4 +16,14 @@ object Routes {
     @Serializable
     object DashBoardScreen
 
+    @Serializable
+    data class BloodDonorsScreen(val bloodGroup: String, val city: String)
+
+    @Serializable
+    object BloodDonorScreen
+
+    @Serializable
+    object BloodRequestScreen
+
+
 }

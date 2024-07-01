@@ -35,7 +35,7 @@ fun SplashScreen(
 ) {
     LaunchedEffect(key1 = Unit) {
         val user = userStorageVM.user
-        delay(300)
+        delay(1000)
         if (user == null) {
             navHostController.navigate(Routes.SignInScreen) {
                 popUpTo(navHostController.graph.id)

@@ -25,7 +25,7 @@ class UserRepositoryImpl @Inject constructor(
 ): UserRepository {
     override fun storeUserToDatabase(user: User): Flow<Result<String>> = callbackFlow {
         trySend(Result.Loading)
-        databaseReference.child(FirebaseRef.USERS).child(user.userId).setValue(user)
+        databaseReference.child(FirebaseRef.PATIENTS).child(user.userId).setValue(user)
             .addOnSuccessListener {
                 trySend(Result.Success("Data inserted Successfully.."))
             }.addOnFailureListener{
@@ -38,7 +38,7 @@ class UserRepositoryImpl @Inject constructor(
 
     override fun uploadUserProfilePic(uri: Uri): Flow<Result<String>> = callbackFlow{
         trySend(Result.Loading)
-        val uploadTask = storageReference.child(FirebaseRef.USERS).child(uri.toString()).putFile(uri)
+        val uploadTask = storageReference.child(FirebaseRef.PATIENTS).child(uri.toString()).putFile(uri)
         Tasks.whenAllSuccess<UploadTask.TaskSnapshot>(uploadTask).addOnSuccessListener{ imageTasks ->
             var downloadUrls = ""
             GlobalScope.launch {

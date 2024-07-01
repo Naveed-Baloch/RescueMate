@@ -28,7 +28,7 @@ class AuthRepositoryImpl @Inject constructor(
     override fun storeUserToDatabase(user: User): Flow<Result<String>> =
         callbackFlow {
         trySend(Result.Loading)
-            databaseReference.child(FirebaseRef.USERS).child(user.userId).setValue(user)
+            databaseReference.child(FirebaseRef.PATIENTS).child(user.userId).setValue(user)
                 .addOnSuccessListener {
                     trySend(Result.Success("Data inserted Successfully.."))
                 }.addOnFailureListener {
@@ -42,7 +42,7 @@ class AuthRepositoryImpl @Inject constructor(
     override fun uploadUserProfilePic(uri: Uri, userId: String): Flow<Result<String>> = callbackFlow {
         trySend(Result.Loading)
         val uploadTask =
-            storageReference.child(FirebaseRef.USERS).child(userId).putFile(uri)
+            storageReference.child(FirebaseRef.PATIENTS).child(userId).putFile(uri)
         Tasks.whenAllSuccess<UploadTask.TaskSnapshot>(uploadTask)
             .addOnSuccessListener { imageTasks ->
                 var downloadUrls = ""
@@ -92,8 +92,24 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun fetchUserDetails(userId: String, dbNodeRef: String): Flow<Result<User>> = callbackFlow{
+        databaseReference.child(dbNodeRef).child(userId).get().addOnSuccessListener { dataSnapshot ->
+            if (dataSnapshot.exists()){
+                val user = dataSnapshot.getValue(User::class.java)
+                user?.let { trySend(Result.Success(user)) }
+            } else{
+                trySend(Result.Failure(java.lang.Exception("User not found!")))
+            }
+        }.addOnFailureListener {
+            Result.Failure(it)
+        }
+        awaitClose {
+            close()
+        }
+    }
+
     override fun signOutFirebaseUser() {
         firebaseAuth.signOut()
-        userPreferences.signOut()
+        userPreferences.removeUserData()
     }
 }

@@ -17,7 +17,7 @@ class UserPreferences(context: Context) {
     fun updateUser(user: User) = sharedPreferences.writeObject(USER_DATA, user)
     fun getUser() = sharedPreferences.readObject<User>(USER_DATA)
 
-    fun signOut() {
+    fun removeUserData() {
         sharedPreferences.edit().remove(USER_DATA).apply()
     }
 }

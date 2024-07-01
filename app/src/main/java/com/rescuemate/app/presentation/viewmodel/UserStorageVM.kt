@@ -11,5 +11,6 @@ class UserStorageVM @Inject constructor(private val userPreferences: UserPrefere
     ViewModel() {
     val user by lazy { userPreferences.getUser() }
     fun setUser(user: User) = userPreferences.updateUser(user)
+    fun removeUserData() = userPreferences.removeUserData()
 
 }

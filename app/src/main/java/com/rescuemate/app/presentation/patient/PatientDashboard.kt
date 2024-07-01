@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,7 +23,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.rescuemate.app.R
+import com.rescuemate.app.navigation.Routes
 import com.rescuemate.app.presentation.theme.RescueMateTheme
 import com.rescuemate.app.presentation.theme.primaryColor
 import com.rescuemate.app.utils.ActionButton
@@ -32,15 +35,23 @@ enum class PatientDashboardUiState{
 }
 
 @Composable
-fun PatientDashboardScreen() {
-    val uiState by remember { mutableStateOf(PatientDashboardUiState.NonEmergency) }
+fun PatientDashboardScreen(contentState: Boolean, navHostController: NavHostController) {
+    var uiState by remember(contentState) { mutableStateOf(PatientDashboardUiState.DashBoard) }
     when (uiState) {
         PatientDashboardUiState.DashBoard -> {
-            PatientDashboardScreenContent()
+            PatientDashboardScreenContent(
+                onEmergencyServiceClick = { uiState = PatientDashboardUiState.Emergency },
+                onNonEmergencyServiceClick = { uiState = PatientDashboardUiState.Emergency }
+            )
         }
 
         PatientDashboardUiState.Emergency -> {
-            PatientEmergencyServices()
+            PatientEmergencyServices(
+                actionRequestAmbulance = {},
+                actionFindBloodDonor = {
+                    navHostController.navigate(Routes.BloodRequestScreen)
+                }
+            )
         }
 
         PatientDashboardUiState.NonEmergency -> {
@@ -52,7 +63,10 @@ fun PatientDashboardScreen() {
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun PatientDashboardScreenContent(){
+fun PatientDashboardScreenContent(
+    onEmergencyServiceClick: () -> Unit,
+    onNonEmergencyServiceClick: () -> Unit,
+){
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(50.dp, Alignment.CenterVertically),
@@ -74,16 +88,12 @@ fun PatientDashboardScreenContent(){
             ActionButton(
                 imageId = R.drawable.ic_rescue,
                 description = "Emergency\nServices",
-                onClick = {
-
-                }
+                onClick = onEmergencyServiceClick
             )
             ActionButton(
                 imageId = R.drawable.ic_rescue,
                 description = "Non Emergency\nServices",
-                onClick = {
-
-                }
+                onClick = onNonEmergencyServiceClick
             )
             ActionButton(
                 imageId = R.drawable.ic_rescue,
@@ -99,7 +109,7 @@ fun PatientDashboardScreenContent(){
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun PatientEmergencyServices(){
+fun PatientEmergencyServices(actionRequestAmbulance: () -> Unit, actionFindBloodDonor: () -> Unit){
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(50.dp, Alignment.CenterVertically),
@@ -121,16 +131,12 @@ fun PatientEmergencyServices(){
             ActionButton(
                 imageId = R.drawable.ic_ambulance,
                 description = "Request Ambulance",
-                onClick = {
-
-                }
+                onClick = actionRequestAmbulance
             )
             ActionButton(
                 imageId = R.drawable.ic_blood_donor,
                 description = "Find Blood Donor",
-                onClick = {
-
-                }
+                onClick = actionFindBloodDonor
             )
             ActionButton(
                 imageId = R.drawable.ic_rescue,
@@ -191,15 +197,15 @@ fun PatientNonEmergencyServices(){
 }
 
 
-@Preview
-@Composable
-fun PatientDashboardScreenPreview(){
-    RescueMateTheme {
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-        ) {
-            PatientDashboardScreen()
-        }
-    }
-}
+//@Preview
+//@Composable
+//fun PatientDashboardScreenPreview(){
+//    RescueMateTheme {
+//        Box(modifier = Modifier
+//            .fillMaxSize()
+//            .background(Color.White)
+//        ) {
+//            PatientDashboardScreen(false, navHostController)
+//        }
+//    }
+//}

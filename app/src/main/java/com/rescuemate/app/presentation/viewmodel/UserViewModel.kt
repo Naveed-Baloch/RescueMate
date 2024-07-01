@@ -33,6 +33,10 @@ class UserViewModel @Inject constructor(
         isLoading = it is Result.Loading
     }
 
+    fun fetchUserDetails(userId: String, dbNodeRef: String) = authRepository.fetchUserDetails(userId, dbNodeRef).onEach {
+        isLoading = it is Result.Loading
+    }
+
     fun storeUserToDb(user: User) = authRepository
         .storeUserToDatabase(user)
         .onEach {

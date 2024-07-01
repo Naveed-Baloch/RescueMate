@@ -19,28 +19,34 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.rescuemate.app.R
+import com.rescuemate.app.dto.User
+import com.rescuemate.app.dto.mock
+import com.rescuemate.app.navigation.Routes
 import com.rescuemate.app.presentation.theme.RescueMateTheme
 import com.rescuemate.app.presentation.theme.primaryColor
 import com.rescuemate.app.utils.ActionButton
 
 
 @Composable
-fun BloodDonorDashBoardScreen() {
-    BloodDonorDashBoardScreenContent()
+fun BloodDonorDashBoardScreen(user: User, navHostController: NavHostController) {
+    BloodDonorDashBoardScreenContent(user = user, actionAddDonor = {
+        navHostController.navigate(Routes.BloodDonorScreen)
+    })
 }
 
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun BloodDonorDashBoardScreenContent() {
+fun BloodDonorDashBoardScreenContent(user: User, actionAddDonor: () -> Unit) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(50.dp, Alignment.CenterVertically),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Welcome,\nHassan Ashfaq".uppercase(),
+            text = "Welcome,\n ${user.name}".uppercase(),
             style = MaterialTheme.typography.headlineMedium,
             color = primaryColor,
             fontWeight = FontWeight.Bold, textAlign = TextAlign.Center,
@@ -55,9 +61,7 @@ fun BloodDonorDashBoardScreenContent() {
             ActionButton(
                 imageId = R.drawable.ic_rescue,
                 description = "Add your \nDonor Profile",
-                onClick = {
-
-                }
+                onClick = { actionAddDonor() }
             )
             ActionButton(
                 imageId = R.drawable.ic_blood_donor,
@@ -86,7 +90,7 @@ fun PatientDashboardScreenPreview() {
                 .fillMaxSize()
                 .background(Color.White)
         ) {
-            BloodDonorDashBoardScreen()
+            BloodDonorDashBoardScreenContent(User.mock, actionAddDonor = {})
         }
     }
 }

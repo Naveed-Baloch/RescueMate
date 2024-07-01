@@ -50,12 +50,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
-import com.bkcoding.garagegurufyp_user.utils.isValidEmail
+import com.rescuemate.app.utils.isValidEmail
 import com.rescuemate.app.R
 import com.rescuemate.app.dto.User
 import com.rescuemate.app.dto.UserType
 import com.rescuemate.app.extensions.clickableWithOutRipple
-import com.rescuemate.app.extensions.isVisible
 import com.rescuemate.app.extensions.progressBar
 import com.rescuemate.app.extensions.showToast
 import com.rescuemate.app.navigation.Routes
@@ -195,7 +194,7 @@ private fun SignUpScreenContent(onSignIn: () -> Unit, onSignUp: (User) -> Unit) 
         Spacer(modifier = Modifier.height(5.dp))
         Text(
             text = "Email",
-            style = MaterialTheme.typography.titleLarge.copy(Color.Black.copy(alpha = 0.7f)),
+            style = MaterialTheme.typography.titleMedium.copy(Color.Black.copy(alpha = 0.7f)),
             modifier = Modifier
                 .fillMaxWidth()
         )
