@@ -1,8 +1,6 @@
 package com.rescuemate.app.presentation.patient
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -18,20 +16,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.rescuemate.app.R
 import com.rescuemate.app.navigation.Routes
-import com.rescuemate.app.presentation.theme.RescueMateTheme
 import com.rescuemate.app.presentation.theme.primaryColor
 import com.rescuemate.app.utils.ActionButton
 
-enum class PatientDashboardUiState{
-    DashBoard, Emergency , NonEmergency
+enum class PatientDashboardUiState {
+    DashBoard, Emergency, NonEmergency
 }
 
 @Composable
@@ -41,7 +36,7 @@ fun PatientDashboardScreen(contentState: Boolean, navHostController: NavHostCont
         PatientDashboardUiState.DashBoard -> {
             PatientDashboardScreenContent(
                 onEmergencyServiceClick = { uiState = PatientDashboardUiState.Emergency },
-                onNonEmergencyServiceClick = { uiState = PatientDashboardUiState.Emergency }
+                onNonEmergencyServiceClick = { uiState = PatientDashboardUiState.NonEmergency }
             )
         }
 
@@ -55,7 +50,12 @@ fun PatientDashboardScreen(contentState: Boolean, navHostController: NavHostCont
         }
 
         PatientDashboardUiState.NonEmergency -> {
-            PatientNonEmergencyServices()
+            PatientNonEmergencyServices(
+                actionBookAmbulance = {},
+                actionFindTestCenter = {
+                    navHostController.navigate(Routes.LaboratoryRequestScreen)
+                }
+            )
         }
     }
 }
@@ -66,7 +66,7 @@ fun PatientDashboardScreen(contentState: Boolean, navHostController: NavHostCont
 fun PatientDashboardScreenContent(
     onEmergencyServiceClick: () -> Unit,
     onNonEmergencyServiceClick: () -> Unit,
-){
+) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(50.dp, Alignment.CenterVertically),
@@ -109,7 +109,7 @@ fun PatientDashboardScreenContent(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun PatientEmergencyServices(actionRequestAmbulance: () -> Unit, actionFindBloodDonor: () -> Unit){
+fun PatientEmergencyServices(actionRequestAmbulance: () -> Unit, actionFindBloodDonor: () -> Unit) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(50.dp, Alignment.CenterVertically),
@@ -152,7 +152,7 @@ fun PatientEmergencyServices(actionRequestAmbulance: () -> Unit, actionFindBlood
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun PatientNonEmergencyServices(){
+fun PatientNonEmergencyServices(actionBookAmbulance: () -> Unit, actionFindTestCenter: () -> Unit) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(50.dp, Alignment.CenterVertically),
@@ -174,16 +174,12 @@ fun PatientNonEmergencyServices(){
             ActionButton(
                 imageId = R.drawable.ic_ambulance,
                 description = "Book Ambulance\n",
-                onClick = {
-
-                }
+                onClick = actionBookAmbulance
             )
             ActionButton(
                 imageId = R.drawable.ic_blood_donor,
                 description = "Find Medical Test Centers",
-                onClick = {
-
-                }
+                onClick = actionFindTestCenter
             )
             ActionButton(
                 imageId = R.drawable.ic_rescue,
@@ -195,17 +191,3 @@ fun PatientNonEmergencyServices(){
         }
     }
 }
-
-
-//@Preview
-//@Composable
-//fun PatientDashboardScreenPreview(){
-//    RescueMateTheme {
-//        Box(modifier = Modifier
-//            .fillMaxSize()
-//            .background(Color.White)
-//        ) {
-//            PatientDashboardScreen(false, navHostController)
-//        }
-//    }
-//}

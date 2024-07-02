@@ -26,4 +26,18 @@ object Routes {
     object BloodRequestScreen
 
 
+    @Serializable
+    object LaboratoryScreen
+
+    @Serializable
+    data class LaboratoriesScreen(val city: String)
+
+
+    @Serializable
+    object LaboratoryRequestScreen
+
+
+    @Serializable
+    object TestsScreen
+
 }

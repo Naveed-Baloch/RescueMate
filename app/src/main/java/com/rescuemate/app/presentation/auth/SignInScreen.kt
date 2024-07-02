@@ -40,10 +40,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.rescuemate.app.utils.isValidEmail
 import com.rescuemate.app.R
 import com.rescuemate.app.dto.User
-import com.rescuemate.app.dto.UserType
 import com.rescuemate.app.extensions.clickableWithOutRipple
 import com.rescuemate.app.extensions.isVisible
 import com.rescuemate.app.extensions.progressBar
@@ -54,8 +52,8 @@ import com.rescuemate.app.presentation.viewmodel.UserStorageVM
 import com.rescuemate.app.presentation.viewmodel.UserViewModel
 import com.rescuemate.app.repository.Result
 import com.rescuemate.app.utils.CustomEditText
-import com.rescuemate.app.utils.UserTypeDropdown
-import com.rescuemate.app.utils.getFirebaseRefFromUserType
+import com.rescuemate.app.utils.FirebaseRef
+import com.rescuemate.app.utils.isValidEmail
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -64,41 +62,44 @@ import kotlinx.coroutines.launch
 fun SignInScreen(
     navHostController: NavHostController,
     userViewModel: UserViewModel = hiltViewModel(),
-    userStorageVM: UserStorageVM = hiltViewModel()
+    userStorageVM: UserStorageVM = hiltViewModel(),
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    var keepShowingLoading by remember{ mutableStateOf(false) }
+    var keepShowingLoading by remember { mutableStateOf(false) }
     val progressBar = remember { context.progressBar() }
 
     LaunchedEffect(key1 = userViewModel.isLoading) {
-        if(!userViewModel.isLoading) delay(1000)
+        if (!userViewModel.isLoading) delay(1000)
         keepShowingLoading = userViewModel.isLoading
         progressBar.isVisible(keepShowingLoading)
     }
 
     SignInScreenContent(
-        onSignIn = { email, password , userType ->
+        onSignIn = { email, password ->
             scope.launch {
-                userViewModel.login(email = email, password = password).collect{
-                    when(it) {
+                userViewModel.login(email = email, password = password).collect {
+                    when (it) {
                         is Result.Failure -> {
                             userStorageVM.removeUserData()
                             context.showToast(it.exception.message ?: "Something went Wrong")
                         }
+
                         is Result.Success -> {
                             val userId = it.data
                             fetchUserDetails(
                                 scope = scope, userViewModel = userViewModel, context = context,
-                                userId = userId, userType = userType
+                                userId = userId,
                             ) { user ->
                                 progressBar.dismiss()
+                                userStorageVM.removeUserData()
                                 userStorageVM.setUser(user = user)
                                 navHostController.navigate(Routes.DashBoardScreen) {
                                     popUpTo(navHostController.graph.id)
                                 }
                             }
                         }
+
                         else -> {}
                     }
                 }
@@ -115,17 +116,20 @@ fun fetchUserDetails(
     userViewModel: UserViewModel,
     context: Context,
     userId: String,
-    userType: UserType,
-    onSuccessfulLogin: (User) -> Unit
+    onSuccessfulLogin: (User) -> Unit,
 ) {
-    val dbNodeRef = getFirebaseRefFromUserType(userType =userType)
     scope.launch {
-        userViewModel.fetchUserDetails(userId = userId, dbNodeRef = dbNodeRef).collect{
-            when(it) {
-                is Result.Failure -> { context.showToast(it.exception.message ?: "Something went Wrong") }
+        userViewModel.fetchUserDetails(userId = userId, dbNodeRef = FirebaseRef.USERS).collect {
+            when (it) {
+                is Result.Failure -> {
+                    context.showToast(it.exception.message ?: "Something went Wrong")
+                }
+
                 is Result.Success -> {
                     onSuccessfulLogin(it.data)
-                } else -> {}
+                }
+
+                else -> {}
             }
         }
     }
@@ -133,10 +137,9 @@ fun fetchUserDetails(
 
 @Composable
 private fun SignInScreenContent(
-    onSignIn: (String, String, UserType) -> Unit,
-    onSignUp: () -> Unit
+    onSignIn: (String, String) -> Unit,
+    onSignUp: () -> Unit,
 ) {
-    var userType by remember { mutableStateOf<UserType?>(null) }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisibility by remember { mutableStateOf(false) }
@@ -200,19 +203,9 @@ private fun SignInScreenContent(
                     } else
                         Image(painter = painterResource(id = R.drawable.ic_hide), contentDescription = "")
                 }
-            },
-        )
-        Spacer(modifier = Modifier.height(5.dp))
-        Text(
-            text = "Login as a?",
-            style = MaterialTheme.typography.titleMedium.copy(Color.Black.copy(alpha = 0.7f)),
-            modifier = Modifier.fillMaxWidth()
+            }
         )
 
-        UserTypeDropdown(
-            modifier = Modifier.fillMaxWidth(),
-            onUserTypeSelected = { userType = it }
-        )
         Spacer(modifier = Modifier.height(20.dp))
         Box(
             modifier = Modifier
@@ -220,8 +213,8 @@ private fun SignInScreenContent(
                 .clip(RoundedCornerShape(10.dp))
                 .background(Color.Red)
                 .clickableWithOutRipple {
-                    if (password.isNotEmpty() && isValidEmail(email) && userType != null) {
-                        onSignIn(email, password, userType!!)
+                    if (password.isNotEmpty() && isValidEmail(email)) {
+                        onSignIn(email, password)
                     }
                 },
             contentAlignment = Alignment.Center
@@ -251,6 +244,6 @@ private fun SignInScreenContent(
 @Composable
 fun SignInScreenPreview() {
     RescueMateTheme {
-        SignInScreenContent(onSignIn = {_,_,_->}, onSignUp = {})
+        SignInScreenContent(onSignIn = { _, _ -> }, onSignUp = {})
     }
 }

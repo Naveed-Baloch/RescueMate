@@ -108,7 +108,6 @@ fun BloodDonorItem(bloodDonor: BloodDonor, onClick: () -> Unit) {
                 shape = RoundedCornerShape(10.dp)
             )
             .clip(RoundedCornerShape(10.dp))
-            .background(Color.Black.copy(alpha = 0.1f))
             .padding(horizontal = 10.dp, vertical = 10.dp)
             .clickableWithOutRipple { onClick() },
         contentAlignment = Alignment.Center

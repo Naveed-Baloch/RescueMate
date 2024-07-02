@@ -110,7 +110,7 @@ fun MainContent(user: User, modifier: Modifier, contentState: Boolean, navHostCo
             }
 
             UserType.LaboratoryOwner -> {
-                LaboratoryDashBoardScreen()
+                LaboratoryDashBoardScreen(user = user, navHostController = navHostController)
             }
         }
     }

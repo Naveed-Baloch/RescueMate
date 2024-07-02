@@ -137,7 +137,7 @@ fun UserTypeDropdown(
 
             DropdownMenuItem(onClick = {
                 expanded = false
-                onUserTypeSelected(UserType.AmbulanceOwner)
+                onUserTypeSelected(UserType.LaboratoryOwner)
                 dropDownText = UserType.LaboratoryOwner.name
             }, text = {
                 Text(text = UserType.LaboratoryOwner.getText()) }

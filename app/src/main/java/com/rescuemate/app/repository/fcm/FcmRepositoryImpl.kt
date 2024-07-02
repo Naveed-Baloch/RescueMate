@@ -1,4 +1,4 @@
-package com.bkcoding.garagegurufyp_user.repository.fcm
+package com.rescuemate.app.repository.fcm
 
 import android.content.Context
 import android.util.Log
@@ -7,8 +7,6 @@ import com.google.auth.oauth2.GoogleCredentials
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.messaging.FirebaseMessaging
 import com.rescuemate.app.dto.User
-import com.rescuemate.app.repository.fcm.FcmRepository
-import com.rescuemate.app.repository.fcm.NotificationReq
 import com.rescuemate.app.sharedpref.UserPreferences
 import com.rescuemate.app.utils.FirebaseRef
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -53,7 +51,7 @@ class FcmRepositoryImpl @Inject constructor(
 
     override fun updateFcmToken(token: String, user: User) {
         val userId = user.userId
-        val userDbRef = FirebaseRef.PATIENTS
+        val userDbRef = FirebaseRef.USERS
         databaseReference.child(userDbRef).child(userId).child(FirebaseRef.TOKEN).setValue(token)
     }
 

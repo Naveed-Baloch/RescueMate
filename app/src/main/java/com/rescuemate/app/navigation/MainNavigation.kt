@@ -12,6 +12,10 @@ import com.rescuemate.app.presentation.blooddonor.BloodDonorScreen
 import com.rescuemate.app.presentation.blooddonor.BloodDonorsScreen
 import com.rescuemate.app.presentation.blooddonor.BloodRequestScreen
 import com.rescuemate.app.presentation.dashboard.DashboardScreen
+import com.rescuemate.app.presentation.laboratory.LaboratoriesScreen
+import com.rescuemate.app.presentation.laboratory.TestsScreen
+import com.rescuemate.app.presentation.laboratory.LaboratoryRequest
+import com.rescuemate.app.presentation.laboratory.LaboratoryScreen
 
 @Composable
 fun MainNavigation(navController: NavHostController) {
@@ -50,5 +54,21 @@ fun MainNavigation(navController: NavHostController) {
             BloodRequestScreen(navHostController = navController)
         }
 
+        composable<Routes.LaboratoryScreen> {
+            LaboratoryScreen(navHostController = navController)
+        }
+
+        composable<Routes.LaboratoriesScreen> { backStackEntry ->
+            val args: Routes.LaboratoriesScreen = backStackEntry.toRoute()
+            LaboratoriesScreen(navController = navController, city = args.city)
+        }
+
+        composable<Routes.LaboratoryRequestScreen> {
+            LaboratoryRequest(navHostController = navController)
+        }
+
+        composable<Routes.TestsScreen> {
+            TestsScreen(navController = navController)
+        }
     }
 }
