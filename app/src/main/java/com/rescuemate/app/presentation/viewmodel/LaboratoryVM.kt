@@ -23,8 +23,8 @@ class LaboratoryVM @Inject constructor(private val userPreferences: UserPreferen
     var userLab by mutableStateOf<Laboratory?>(null)
     val user by lazy { userPreferences.getUser() }
 
-    fun getLaboratories(city: String) = laboratoryRepository
-        .getLaboratories(city)
+    fun getLaboratories(city: String, laboratoryTest: String) = laboratoryRepository
+        .getLaboratories(city, laboratoryTest)
         .onEach {
             isLoading = it is Result.Loading
             when (it) {

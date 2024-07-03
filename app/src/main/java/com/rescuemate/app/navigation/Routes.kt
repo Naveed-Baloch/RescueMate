@@ -30,7 +30,7 @@ object Routes {
     object LaboratoryScreen
 
     @Serializable
-    data class LaboratoriesScreen(val city: String)
+    data class LaboratoriesScreen(val city: String, val laboratoryTest: String)
 
 
     @Serializable

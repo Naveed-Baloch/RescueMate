@@ -52,6 +52,7 @@ import com.rescuemate.app.utils.openWhatsApp
 @Composable
 fun LaboratoriesScreen(
     city: String,
+    laboratoryTest: String,
     laboratoryVM: LaboratoryVM = hiltViewModel(),
     navController: NavHostController,
 ) {
@@ -62,7 +63,7 @@ fun LaboratoriesScreen(
     LaunchedEffect(key1 = Unit) {
         isLoading = true
         progressBar.isVisible(true)
-        laboratoryVM.getLaboratories(city = city).collect {
+        laboratoryVM.getLaboratories(city = city,  laboratoryTest = laboratoryTest).collect {
             if (it !is Result.Loading) {
                 isLoading = false
                 progressBar.dismiss()

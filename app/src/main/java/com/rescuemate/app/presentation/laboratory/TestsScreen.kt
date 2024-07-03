@@ -47,10 +47,12 @@ import com.rescuemate.app.extensions.clickableWithOutRipple
 import com.rescuemate.app.extensions.isVisible
 import com.rescuemate.app.extensions.progressBar
 import com.rescuemate.app.extensions.showToast
+import com.rescuemate.app.presentation.blooddonor.BloodGroupDropdown
 import com.rescuemate.app.presentation.theme.primaryColor
 import com.rescuemate.app.presentation.viewmodel.LaboratoryVM
 import com.rescuemate.app.repository.Result
 import com.rescuemate.app.utils.CustomEditText
+import com.rescuemate.app.utils.LaboratoryTestDropDown
 import com.rescuemate.app.utils.TopBar
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -113,9 +115,11 @@ fun TestsScreen(
 
     val currentLaboratoryId = laboratoryVM.userLab?.ownerId
     if (showTestEntryDialog && currentLaboratoryId != null) {
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black.copy(alpha = 0.1f))) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.1f))
+        ) {
             AddTestDialog(onDismissRequest = { showTestEntryDialog = false }) { name, price ->
                 scope.launch {
                     laboratoryVM.addLaboratoryTest(LaboratoryTest(name = name, price = price), laboratoryId = currentLaboratoryId).collect {
@@ -131,14 +135,11 @@ fun TestsScreen(
                                 showTestEntryDialog = false
                                 laboratoryVM.getUserLaboratory().collect{}
                             }
-
                             else -> {}
                         }
-
                     }
                 }
             }
-
         }
     }
 
@@ -171,21 +172,16 @@ fun AddTestDialog(onDismissRequest: () -> Unit, actionAddTest: (String, String) 
                 modifier = Modifier
             )
             Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(10.dp))
             Text(
-                text = "Test",
+                text = "Select Test",
                 style = MaterialTheme.typography.titleMedium.copy(Color.Black.copy(alpha = 0.7f)),
-                modifier = Modifier
-                    .fillMaxWidth()
-
+                modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(5.dp))
-            CustomEditText(
-                value = testName,
-                label = "Enter Test Name",
-                isError = false,
-                onValueChange = {
-                    testName = it
-                }
+            LaboratoryTestDropDown(
+                modifier = Modifier.fillMaxWidth(),
+                onBloodTestSelected = { testName = it }
             )
 
             Spacer(modifier = Modifier.height(10.dp))
@@ -247,11 +243,11 @@ fun TestItem(test: LaboratoryTest) {
             .padding(horizontal = 10.dp, vertical = 10.dp),
         contentAlignment = Alignment.Center
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .padding(horizontal = 5.dp, vertical = 5.dp)
                 .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+
         ) {
             Text(
                 text = "Test Name: ${test.name}",

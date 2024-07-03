@@ -29,23 +29,26 @@ import androidx.navigation.NavHostController
 import com.rescuemate.app.extensions.clickableWithOutRipple
 import com.rescuemate.app.extensions.showToast
 import com.rescuemate.app.navigation.Routes
+import com.rescuemate.app.presentation.blooddonor.BloodGroupDropdown
 import com.rescuemate.app.utils.CityDropDown
+import com.rescuemate.app.utils.LaboratoryTestDropDown
 import com.rescuemate.app.utils.TopBar
 
 @Composable
 fun LaboratoryRequest(navHostController: NavHostController) {
     LaboratoryRequestScreenContent(
-        findLaboratory = { city ->
-            navHostController.navigate(Routes.LaboratoriesScreen(city))
+        findLaboratory = { city , laboratoryTest->
+            navHostController.navigate(Routes.LaboratoriesScreen(city, laboratoryTest))
         },
         onBack = { navHostController.popBackStack() }
     )
 }
 
 @Composable
-fun LaboratoryRequestScreenContent(findLaboratory: (city: String) -> Unit, onBack: () -> Unit) {
+fun LaboratoryRequestScreenContent(findLaboratory: (city: String, laboratoryTest: String) -> Unit, onBack: () -> Unit) {
     val context = LocalContext.current
     var city by remember { mutableStateOf("") }
+    var laboratoryTest by remember { mutableStateOf("") }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -81,14 +84,25 @@ fun LaboratoryRequestScreenContent(findLaboratory: (city: String) -> Unit, onBac
                 onCitySelected = { city = it }
             )
             Spacer(modifier = Modifier.height(10.dp))
+            Text(
+                text = "Select Test",
+                style = MaterialTheme.typography.titleMedium.copy(Color.Black.copy(alpha = 0.7f)),
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(5.dp))
+            LaboratoryTestDropDown(
+                modifier = Modifier.fillMaxWidth(),
+                onBloodTestSelected = { laboratoryTest = it }
+            )
+            Spacer(modifier = Modifier.height(10.dp))
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(10.dp))
                     .background(Color.Red)
                     .clickableWithOutRipple {
-                        if (city.isNotEmpty()) {
-                            findLaboratory(city)
+                        if (city.isNotEmpty() && laboratoryTest.isNotEmpty()) {
+                            findLaboratory(city, laboratoryTest)
                         } else {
                             context.showToast("Something is missing!")
                         }
@@ -111,5 +125,5 @@ fun LaboratoryRequestScreenContent(findLaboratory: (city: String) -> Unit, onBac
 @Preview
 @Composable
 fun BloodRequestScreenContentPreview() {
-    LaboratoryRequestScreenContent(onBack = {}, findLaboratory = { _ -> })
+    LaboratoryRequestScreenContent(onBack = {}, findLaboratory = { _, _-> })
 }

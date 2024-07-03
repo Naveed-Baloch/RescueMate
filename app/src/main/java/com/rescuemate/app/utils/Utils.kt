@@ -134,3 +134,65 @@ fun CityDropDown(
         }
     }
 }
+
+enum class BloodTest(val displayName: String) {
+    CBC("Complete Blood Count (CBC)"),
+    BMP("Basic Metabolic Panel (BMP)"),
+    CMP("Comprehensive Metabolic Panel (CMP)"),
+    Lipid("Lipid Panel"),
+    LFTs("Liver Function Tests (LFTs)"),
+    TFTs("Thyroid Function Tests (TFTs)"),
+    HbA1c("Hemoglobin A1c (HbA1c)"),
+    FBS("Fasting Blood Sugar (FBS)"),
+    OGTT("Oral Glucose Tolerance Test (OGTT)"),
+    Urinalysis("Urinalysis"),
+    ECG("Electrocardiogram (ECG/EKG)"),
+    ChestXray("Chest X-ray"),
+    MRI("Magnetic Resonance Imaging (MRI)"),
+    CTScan("Computed Tomography (CT) Scan"),
+    Ultrasound("Ultrasound"),
+    Mammogram("Mammogram"),
+    PapSmear("Pap Smear"),
+    PSA("Prostate-Specific Antigen (PSA) Test"),
+    Colonoscopy("Colonoscopy"),
+    DEXA("Bone Density Scan (DEXA)")
+}
+
+@Composable
+fun LaboratoryTestDropDown(
+    modifier: Modifier = Modifier,
+    onBloodTestSelected: (String) -> Unit,
+) {
+    var expanded by remember { mutableStateOf(false) }
+    var selectedBloodTest by remember { mutableStateOf("") }
+
+    Box(
+        modifier = modifier
+            .clip(RoundedCornerShape(10.dp))
+            .background(Color.Black.copy(alpha = 0.1f))
+            .padding(vertical = 15.dp, horizontal = 10.dp)
+            .clickable { expanded = true }) {
+        Text(
+            text = selectedBloodTest.ifEmpty { "Select your blood test" },
+            modifier = Modifier.align(Alignment.CenterStart)
+        )
+        Icon(
+            imageVector = Icons.Default.ArrowDropDown,
+            contentDescription = null,
+            modifier = Modifier.align(Alignment.CenterEnd)
+        )
+
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            BloodTest.values().forEach { bloodTest ->
+                DropdownMenuItem(text = { Text(text = bloodTest.displayName) }, onClick = {
+                    expanded = false
+                    selectedBloodTest = bloodTest.displayName
+                    onBloodTestSelected(bloodTest.displayName)
+                })
+            }
+        }
+    }
+}

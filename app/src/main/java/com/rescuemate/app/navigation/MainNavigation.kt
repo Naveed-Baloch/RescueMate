@@ -60,7 +60,7 @@ fun MainNavigation(navController: NavHostController) {
 
         composable<Routes.LaboratoriesScreen> { backStackEntry ->
             val args: Routes.LaboratoriesScreen = backStackEntry.toRoute()
-            LaboratoriesScreen(navController = navController, city = args.city)
+            LaboratoriesScreen(navController = navController, city = args.city, laboratoryTest = args.laboratoryTest)
         }
 
         composable<Routes.LaboratoryRequestScreen> {

@@ -172,11 +172,6 @@ fun PatientNonEmergencyServices(actionBookAmbulance: () -> Unit, actionFindTestC
             verticalArrangement = Arrangement.spacedBy(30.dp)
         ) {
             ActionButton(
-                imageId = R.drawable.ic_ambulance,
-                description = "Book Ambulance\n",
-                onClick = actionBookAmbulance
-            )
-            ActionButton(
                 imageId = R.drawable.ic_blood_donor,
                 description = "Find Medical Test Centers",
                 onClick = actionFindTestCenter

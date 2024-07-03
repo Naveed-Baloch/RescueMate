@@ -21,13 +21,13 @@ class LaboratoryRepositoryImpl @Inject constructor(
     private val databaseReference: DatabaseReference,
 ) : LaboratoryRepository {
 
-    override fun getLaboratories(city: String): Flow<Result<List<Laboratory>>> = callbackFlow {
+    override fun getLaboratories(city: String,laboratoryTest :String): Flow<Result<List<Laboratory>>> = callbackFlow {
         val laboratories = mutableListOf<Laboratory>()
         databaseReference.child(FirebaseRef.LABORATORIES).get().addOnSuccessListener { dataSnapshot ->
             if (dataSnapshot.exists()) {
                 for (ds in dataSnapshot.children) {
                     val laboratory: Laboratory? = ds.getValue(Laboratory::class.java)
-                    if (laboratory != null && laboratory.city == city) {
+                    if (laboratory != null && laboratory.city == city && laboratory.tests.any { it.name == laboratoryTest }) {
                         laboratories.add(laboratory)
                     }
                 }
