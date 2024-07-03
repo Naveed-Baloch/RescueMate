@@ -42,7 +42,10 @@ fun PatientDashboardScreen(contentState: Boolean, navHostController: NavHostCont
 
         PatientDashboardUiState.Emergency -> {
             PatientEmergencyServices(
-                actionRequestAmbulance = {},
+                actionRequestAmbulance = {
+                    navHostController.navigate(Routes.AmbulanceRequestScreen)
+                },
+
                 actionFindBloodDonor = {
                     navHostController.navigate(Routes.BloodRequestScreen)
                 }
@@ -51,7 +54,6 @@ fun PatientDashboardScreen(contentState: Boolean, navHostController: NavHostCont
 
         PatientDashboardUiState.NonEmergency -> {
             PatientNonEmergencyServices(
-                actionBookAmbulance = {},
                 actionFindTestCenter = {
                     navHostController.navigate(Routes.LaboratoryRequestScreen)
                 }
@@ -152,7 +154,7 @@ fun PatientEmergencyServices(actionRequestAmbulance: () -> Unit, actionFindBlood
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun PatientNonEmergencyServices(actionBookAmbulance: () -> Unit, actionFindTestCenter: () -> Unit) {
+fun PatientNonEmergencyServices(actionFindTestCenter: () -> Unit) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(50.dp, Alignment.CenterVertically),

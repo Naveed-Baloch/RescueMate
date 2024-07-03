@@ -40,4 +40,10 @@ object Routes {
     @Serializable
     object TestsScreen
 
+    @Serializable
+    object AmbulanceScreen
+
+    @Serializable
+    object AmbulanceRequestScreen
+
 }

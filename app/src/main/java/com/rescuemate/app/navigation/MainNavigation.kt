@@ -6,6 +6,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.rescuemate.app.presentation.SplashScreen
+import com.rescuemate.app.presentation.ambulance.AmbulanceRequestScreen
+import com.rescuemate.app.presentation.ambulance.AmbulanceScreen
 import com.rescuemate.app.presentation.auth.SignInScreen
 import com.rescuemate.app.presentation.auth.SignUpScreen
 import com.rescuemate.app.presentation.blooddonor.BloodDonorScreen
@@ -70,5 +72,14 @@ fun MainNavigation(navController: NavHostController) {
         composable<Routes.TestsScreen> {
             TestsScreen(navController = navController)
         }
+
+        composable<Routes.AmbulanceScreen> {
+            AmbulanceScreen(navHostController = navController)
+        }
+
+        composable<Routes.AmbulanceRequestScreen> {
+            AmbulanceRequestScreen(navHostController = navController)
+        }
+
     }
 }

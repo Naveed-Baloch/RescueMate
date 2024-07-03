@@ -2,6 +2,7 @@ package com.rescuemate.app.utils
 
 import android.content.Context
 import android.content.Intent
+import android.location.Location
 import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -195,4 +196,10 @@ fun LaboratoryTestDropDown(
             }
         }
     }
+}
+
+
+
+interface LocationTracker {
+    suspend fun getCurrentLocation(): Location?
 }

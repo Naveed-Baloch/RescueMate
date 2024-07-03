@@ -1,5 +1,7 @@
 package com.rescuemate.app.di
 
+import com.rescuemate.app.repository.ambulance.AmbulanceRepository
+import com.rescuemate.app.repository.ambulance.AmbulanceRepositoryImpl
 import com.rescuemate.app.repository.fcm.FcmRepositoryImpl
 import com.rescuemate.app.repository.auth.AuthRepository
 import com.rescuemate.app.repository.auth.AuthRepositoryImpl
@@ -38,4 +40,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun providesLaboratoryRepository(repo: LaboratoryRepositoryImpl): LaboratoryRepository
+
+    @Binds
+    @Singleton
+    abstract fun providesAmbulanceRepository(repo: AmbulanceRepositoryImpl): AmbulanceRepository
 }
