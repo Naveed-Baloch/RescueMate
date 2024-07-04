@@ -6,6 +6,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.rescuemate.app.dto.Ambulance
+import com.rescuemate.app.dto.AmbulanceRequest
 import com.rescuemate.app.dto.Laboratory
 import com.rescuemate.app.dto.LaboratoryTest
 import com.rescuemate.app.repository.Result
@@ -14,6 +15,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import java.util.UUID
 import javax.inject.Inject
 
 class AmbulanceRepositoryImpl @Inject constructor(
@@ -21,19 +23,23 @@ class AmbulanceRepositoryImpl @Inject constructor(
     private val databaseReference: DatabaseReference,
 ) : AmbulanceRepository {
 
-    override fun getAmbulances(city: String): Flow<Result<List<Ambulance>>> = callbackFlow {
-        val ambulances = mutableListOf<Ambulance>()
+    override fun getFirstAvailableAmbulance(city: String): Flow<Result<Ambulance>> = callbackFlow {
         databaseReference.child(FirebaseRef.AMBULANCES).get().addOnSuccessListener { dataSnapshot ->
             if (dataSnapshot.exists()) {
+                var isAmbulanceAvailable = false
                 for (ds in dataSnapshot.children) {
                     val ambulance: Ambulance? = ds.getValue(Ambulance::class.java)
                     if (ambulance != null && ambulance.city == city && ambulance.isAvailable) {
-                        ambulances.add(ambulance)
+                        trySend(Result.Success(ambulance))
+                        isAmbulanceAvailable = true
+                        break
                     }
                 }
-                trySend(Result.Success(ambulances))
+                if (!isAmbulanceAvailable) {
+                    trySend(Result.Failure(Exception("No Ambulance found!")))
+                }
             } else {
-                trySend(Result.Failure(Exception("No data found")))
+                trySend(Result.Failure(Exception("No Ambulance found!")))
             }
         }.addOnFailureListener {
             trySend(Result.Failure(it))
@@ -72,4 +78,18 @@ class AmbulanceRepositoryImpl @Inject constructor(
                 close()
             }
         }
+
+    override fun addAmbulanceRequest(ambulanceRequest: AmbulanceRequest) = callbackFlow {
+        trySend(Result.Loading)
+        databaseReference.child(FirebaseRef.AMBULANCE_REQUESTS).child(UUID.randomUUID().toString()).setValue(ambulanceRequest)
+            .addOnSuccessListener {
+                trySend(Result.Success("Request is Submitted!"))
+            }.addOnFailureListener {
+                trySend(Result.Failure(it))
+            }
+        awaitClose {
+            close()
+        }
+    }
+
 }

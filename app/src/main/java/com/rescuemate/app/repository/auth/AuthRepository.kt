@@ -11,6 +11,6 @@ interface AuthRepository {
     fun uploadUserProfilePic(uri: Uri, userId: String): Flow<Result<String>>
     fun signUp(user: User): Flow<Result<String>>
     fun login(email: String, password: String): Flow<Result<String>>
-    fun fetchUserDetails(userId: String, dbNodeRef: String): Flow<Result<User>>
+    fun fetchUserDetails(userId: String): Flow<Result<User>>
     fun signOutFirebaseUser()
 }

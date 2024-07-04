@@ -22,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,7 +42,10 @@ import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.rescuemate.app.R
+import com.rescuemate.app.dto.User
 import com.rescuemate.app.extensions.clickableWithOutRipple
+import com.rescuemate.app.extensions.isVisible
+import com.rescuemate.app.extensions.progressBar
 import com.rescuemate.app.extensions.showToast
 import com.rescuemate.app.presentation.maps.CheckLocationPermissions
 import com.rescuemate.app.presentation.maps.getAddressFromLatLng
@@ -50,6 +54,7 @@ import com.rescuemate.app.presentation.viewmodel.LocationViewModel
 import com.rescuemate.app.utils.CityDropDown
 import com.rescuemate.app.utils.CustomEditText
 import com.rescuemate.app.utils.TopBar
+import kotlinx.coroutines.CoroutineScope
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
@@ -88,6 +93,8 @@ fun AmbulanceRequestScreen(navHostController: NavHostController, ambulanceVM: Am
             )
         }
     }
+    val progressBar = remember { context.progressBar() }
+    progressBar.isVisible(ambulanceVM.isLoading)
 
     if(checkLocationPermissions) {
         CheckLocationPermissions()
@@ -170,9 +177,11 @@ fun AmbulanceRequestScreen(navHostController: NavHostController, ambulanceVM: Am
                     .clip(RoundedCornerShape(10.dp))
                     .background(Color.Red)
                     .clickableWithOutRipple {
-                        if (city.isNotEmpty() && lat != 0.0 && lng != 0.0) {
-
-                        } else if (city.isEmpty()) {
+                        if (city.isNotEmpty() && lat != 0.0 && lng != 0.0 && address.isNotEmpty()) {
+                            ambulanceVM.processAddRequest(city = city, lat = lat, lng = lng, address = address, context = context, onSuccess = {
+                                navHostController.popBackStack()
+                            })
+                        } else if (city.isEmpty() || address.isNotEmpty()) {
                             context.showToast("Something is missing!")
                         } else {
                             context.showToast("Please Select Location from Map!")
@@ -190,4 +199,8 @@ fun AmbulanceRequestScreen(navHostController: NavHostController, ambulanceVM: Am
             }
         }
     }
+}
+
+private fun addRequest(scope: CoroutineScope, ambulanceVM: AmbulanceVM, user: User, ) {
+
 }

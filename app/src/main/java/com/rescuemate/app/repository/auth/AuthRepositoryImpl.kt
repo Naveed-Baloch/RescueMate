@@ -92,8 +92,8 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun fetchUserDetails(userId: String, dbNodeRef: String): Flow<Result<User>> = callbackFlow{
-        databaseReference.child(dbNodeRef).child(userId).get().addOnSuccessListener { dataSnapshot ->
+    override fun fetchUserDetails(userId: String): Flow<Result<User>> = callbackFlow{
+        databaseReference.child(FirebaseRef.USERS).child(userId).get().addOnSuccessListener { dataSnapshot ->
             if (dataSnapshot.exists()){
                 val user = dataSnapshot.getValue(User::class.java)
                 user?.let { trySend(Result.Success(user)) }

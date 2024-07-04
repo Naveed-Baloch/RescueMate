@@ -27,6 +27,7 @@ data class User(
     val cnic: String = "",
     val userType: UserType = UserType.Patient,
     val password: String = "",
+    val token: String = "",
     val phoneNumber: String = "",
 ) : Parcelable {
     companion object

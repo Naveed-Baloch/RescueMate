@@ -119,7 +119,7 @@ fun fetchUserDetails(
     onSuccessfulLogin: (User) -> Unit,
 ) {
     scope.launch {
-        userViewModel.fetchUserDetails(userId = userId, dbNodeRef = FirebaseRef.USERS).collect {
+        userViewModel.fetchUserDetails(userId = userId).collect {
             when (it) {
                 is Result.Failure -> {
                     context.showToast(it.exception.message ?: "Something went Wrong")
