@@ -91,10 +91,10 @@ fun LaboratoryDashBoardScreenContent(user: User, laboratoryVM: LaboratoryVM = hi
             horizontalArrangement = Arrangement.SpaceAround,
             verticalArrangement = Arrangement.spacedBy(30.dp)
         ) {
-            if (laboratoryVM.user == null) {
+            if (laboratoryVM.userLab == null) {
                 ActionButton(
                     imageId = R.drawable.ic_emergency,
-                    description = if (laboratoryVM.user == null) "Add Laboratory" else "Edit Laboratory",
+                    description = if (laboratoryVM.userLab == null) "Add Laboratory" else "Edit Laboratory",
                     imageModifier = Modifier.run { size(50.dp).offset(y = (-10).dp) },
                     onClick = actionAddLab
                 )
