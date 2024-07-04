@@ -1,5 +1,7 @@
 package com.rescuemate.app.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -7,6 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.rescuemate.app.presentation.SplashScreen
 import com.rescuemate.app.presentation.ambulance.AmbulanceRequestScreen
+import com.rescuemate.app.presentation.ambulance.AmbulanceRequestsScreen
 import com.rescuemate.app.presentation.ambulance.AmbulanceScreen
 import com.rescuemate.app.presentation.auth.SignInScreen
 import com.rescuemate.app.presentation.auth.SignUpScreen
@@ -19,6 +22,7 @@ import com.rescuemate.app.presentation.laboratory.TestsScreen
 import com.rescuemate.app.presentation.laboratory.LaboratoryRequest
 import com.rescuemate.app.presentation.laboratory.LaboratoryScreen
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun MainNavigation(navController: NavHostController) {
     NavHost(
@@ -79,6 +83,10 @@ fun MainNavigation(navController: NavHostController) {
 
         composable<Routes.AmbulanceRequestScreen> {
             AmbulanceRequestScreen(navHostController = navController)
+        }
+
+        composable<Routes.AmbulanceRequestsScreen> {
+            AmbulanceRequestsScreen(navController = navController)
         }
 
     }

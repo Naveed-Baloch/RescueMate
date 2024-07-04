@@ -123,7 +123,7 @@ fun LaboratoryContent(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
-            .padding(vertical = 30.dp, horizontal = 20.dp)
+            .padding(vertical = 40.dp, horizontal = 20.dp)
             .verticalScroll(rememberScrollState())
     ) {
         TopBar(text = "Add Laboratory") {

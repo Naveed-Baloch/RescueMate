@@ -11,6 +11,7 @@ import com.rescuemate.app.extensions.isVisible
 import com.rescuemate.app.extensions.showToast
 import com.rescuemate.app.repository.Result
 import com.rescuemate.app.repository.auth.AuthRepository
+import com.rescuemate.app.repository.fcm.FcmRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -18,7 +19,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class UserViewModel @Inject constructor(
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val fcmRepository: FcmRepository,
 ) : ViewModel() {
     var isLoading by mutableStateOf(false)
 
@@ -32,6 +34,8 @@ class UserViewModel @Inject constructor(
     fun signup(user: User) = authRepository.signUp(user).onEach {
         isLoading = it is Result.Loading
     }
+
+
 
     fun fetchUserDetails(userId: String) = authRepository.fetchUserDetails(userId).onEach {
         isLoading = it is Result.Loading

@@ -16,11 +16,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.rescuemate.app.R
+import com.rescuemate.app.extensions.openEmail
 import com.rescuemate.app.navigation.Routes
 import com.rescuemate.app.presentation.theme.primaryColor
 import com.rescuemate.app.utils.ActionButton
@@ -69,6 +71,7 @@ fun PatientDashboardScreenContent(
     onEmergencyServiceClick: () -> Unit,
     onNonEmergencyServiceClick: () -> Unit,
 ) {
+    val context = LocalContext.current
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(50.dp, Alignment.CenterVertically),
@@ -101,7 +104,7 @@ fun PatientDashboardScreenContent(
                 imageId = R.drawable.ic_rescue,
                 description = "Need Help?\n",
                 onClick = {
-
+                    context.openEmail("ucphassan@gmail.com")
                 }
             )
 
@@ -112,6 +115,7 @@ fun PatientDashboardScreenContent(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun PatientEmergencyServices(actionRequestAmbulance: () -> Unit, actionFindBloodDonor: () -> Unit) {
+    val context = LocalContext.current
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(50.dp, Alignment.CenterVertically),
@@ -144,7 +148,7 @@ fun PatientEmergencyServices(actionRequestAmbulance: () -> Unit, actionFindBlood
                 imageId = R.drawable.ic_rescue,
                 description = "Need Help?\n",
                 onClick = {
-
+                    context.openEmail("ucphassan@gmail.com")
                 }
             )
 
@@ -155,6 +159,7 @@ fun PatientEmergencyServices(actionRequestAmbulance: () -> Unit, actionFindBlood
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun PatientNonEmergencyServices(actionFindTestCenter: () -> Unit) {
+    val context = LocalContext.current
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(50.dp, Alignment.CenterVertically),
@@ -182,7 +187,7 @@ fun PatientNonEmergencyServices(actionFindTestCenter: () -> Unit) {
                 imageId = R.drawable.ic_rescue,
                 description = "Need Help?\n",
                 onClick = {
-
+                    context.openEmail("ucphassan@gmail.com")
                 }
             )
         }

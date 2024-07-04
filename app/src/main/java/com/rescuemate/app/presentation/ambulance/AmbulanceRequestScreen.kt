@@ -50,20 +50,31 @@ import com.rescuemate.app.extensions.showToast
 import com.rescuemate.app.presentation.maps.CheckLocationPermissions
 import com.rescuemate.app.presentation.maps.getAddressFromLatLng
 import com.rescuemate.app.presentation.viewmodel.AmbulanceVM
+import com.rescuemate.app.presentation.viewmodel.FcmVM
 import com.rescuemate.app.presentation.viewmodel.LocationViewModel
+import com.rescuemate.app.repository.fcm.Message
+import com.rescuemate.app.repository.fcm.Notification
+import com.rescuemate.app.repository.fcm.NotificationReq
 import com.rescuemate.app.utils.CityDropDown
 import com.rescuemate.app.utils.CustomEditText
 import com.rescuemate.app.utils.TopBar
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
-fun AmbulanceRequestScreen(navHostController: NavHostController, ambulanceVM: AmbulanceVM = hiltViewModel(), locationViewModel: LocationViewModel = hiltViewModel()) {
+fun AmbulanceRequestScreen(
+    navHostController: NavHostController,
+    ambulanceVM: AmbulanceVM = hiltViewModel(),
+    fcmVM: FcmVM = hiltViewModel(),
+    locationViewModel: LocationViewModel = hiltViewModel(),
+) {
     var city by remember { mutableStateOf("") }
     var lat by remember { mutableDoubleStateOf(0.0) }
     var lng by remember { mutableDoubleStateOf(0.0) }
     var address by remember { mutableStateOf("") }
     var checkLocationPermissions by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
     val markerState by remember(lng, lat) { mutableStateOf(MarkerState(position = LatLng(lat, lng))) }
     val cameraPosition = remember { LatLng(31.5204, 74.3587) }
 
@@ -103,7 +114,7 @@ fun AmbulanceRequestScreen(navHostController: NavHostController, ambulanceVM: Am
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White),
+            .background(Color.White).padding(top = 10.dp),
         verticalArrangement = Arrangement.Top
     ) {
         Box(
@@ -178,9 +189,26 @@ fun AmbulanceRequestScreen(navHostController: NavHostController, ambulanceVM: Am
                     .background(Color.Red)
                     .clickableWithOutRipple {
                         if (city.isNotEmpty() && lat != 0.0 && lng != 0.0 && address.isNotEmpty()) {
-                            ambulanceVM.processAddRequest(city = city, lat = lat, lng = lng, address = address, context = context, onSuccess = {
-                                navHostController.popBackStack()
-                            })
+                            ambulanceVM.processAddRequest(
+                                city = city,
+                                lat = lat,
+                                lng = lng,
+                                address = address,
+                                context = context
+                            ) { ambulanceOwnerToken ->
+                                val notificationReq = NotificationReq(
+                                    message = Message(
+                                        token = ambulanceOwnerToken,
+                                        notification = Notification(title = "You have new ambulance request from ${ambulanceVM.user?.name}", body = "At: $address")
+                                    )
+                                )
+                                scope.launch {
+                                    fcmVM.sendPushNotification(notificationReq)
+                                    navHostController.popBackStack()
+                                    context.showToast("Your request is placed!")
+                                }
+                            }
+
                         } else if (city.isEmpty() || address.isNotEmpty()) {
                             context.showToast("Something is missing!")
                         } else {

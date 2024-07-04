@@ -41,13 +41,13 @@ import com.rescuemate.app.dto.LaboratoryTest
 import com.rescuemate.app.extensions.clickableWithOutRipple
 import com.rescuemate.app.extensions.isVisible
 import com.rescuemate.app.extensions.openDialPanel
+import com.rescuemate.app.extensions.openWhatsApp
 import com.rescuemate.app.extensions.progressBar
 import com.rescuemate.app.presentation.theme.RescueMateTheme
 import com.rescuemate.app.presentation.theme.primaryColor
 import com.rescuemate.app.presentation.viewmodel.LaboratoryVM
 import com.rescuemate.app.repository.Result
 import com.rescuemate.app.utils.TopBar
-import com.rescuemate.app.utils.openWhatsApp
 
 @Composable
 fun LaboratoriesScreen(
@@ -63,7 +63,7 @@ fun LaboratoriesScreen(
     LaunchedEffect(key1 = Unit) {
         isLoading = true
         progressBar.isVisible(true)
-        laboratoryVM.getLaboratories(city = city,  laboratoryTest = laboratoryTest).collect {
+        laboratoryVM.getLaboratories(city = city, laboratoryTest = laboratoryTest).collect {
             if (it !is Result.Loading) {
                 isLoading = false
                 progressBar.dismiss()
@@ -71,7 +71,7 @@ fun LaboratoriesScreen(
         }
     }
 
-    LazyColumn(modifier = Modifier.padding(vertical = 30.dp, horizontal = 20.dp)) {
+    LazyColumn(modifier = Modifier.padding(vertical = 40.dp, horizontal = 20.dp)) {
         item {
             Box(modifier = Modifier.height(60.dp)) {
                 TopBar(text = "Test Centers near by") {
@@ -279,7 +279,7 @@ fun BloodDonorItemPreview() {
                     phoneNumber = "(692) 356-1516",
                     isAvailable = false,
                     address = "eget",
-                    tests = listOf(LaboratoryTest( name = "Santiago Valencia", price = "luctus"))
+                    tests = listOf(LaboratoryTest(name = "Santiago Valencia", price = "luctus"))
                 )
             )
         }

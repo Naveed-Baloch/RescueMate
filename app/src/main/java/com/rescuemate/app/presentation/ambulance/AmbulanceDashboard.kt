@@ -19,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -28,6 +29,7 @@ import androidx.navigation.NavHostController
 import com.rescuemate.app.R
 import com.rescuemate.app.dto.User
 import com.rescuemate.app.extensions.isVisible
+import com.rescuemate.app.extensions.openEmail
 import com.rescuemate.app.extensions.progressBar
 import com.rescuemate.app.extensions.showToast
 import com.rescuemate.app.navigation.Routes
@@ -76,25 +78,27 @@ fun AmbulanceDashBoardScreen(
         )
 
         FlowRow(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().alpha(if(isLoading) 0f else 1f),
             horizontalArrangement = Arrangement.SpaceAround,
             verticalArrangement = Arrangement.spacedBy(30.dp)
         ) {
-            ActionButton(
-                imageId = R.drawable.ic_emergency,
-                description = if (ambulanceVM.userAmbulance == null) "Add Ambulance" else "Edit Ambulance",
-                imageModifier = Modifier.run { size(50.dp).offset(y = (-10).dp) },
-                onClick = {
-                    navHostController.navigate(Routes.AmbulanceScreen)
-                }
-            )
+            if(ambulanceVM.userAmbulance == null ) {
+                ActionButton(
+                    imageId = R.drawable.ic_emergency,
+                    description = if (ambulanceVM.userAmbulance == null) "Add Ambulance" else "Edit Ambulance",
+                    imageModifier = Modifier.run { size(50.dp).offset(y = (-10).dp) },
+                    onClick = {
+                        navHostController.navigate(Routes.AmbulanceScreen)
+                    }
+                )
+            }
             ActionButton(
                 imageId = R.drawable.ic_calendar,
                 description = "Requests",
                 imageModifier = Modifier.run { size(50.dp).offset(y = (-10).dp) },
                 onClick = {
                     if (ambulanceVM.userAmbulance != null) {
-
+                        navHostController.navigate(Routes.AmbulanceRequestsScreen)
                     } else {
                         context.showToast("Please Add Ambulance first!")
                     }
@@ -105,7 +109,7 @@ fun AmbulanceDashBoardScreen(
                 imageId = R.drawable.ic_rescue,
                 description = "Need Help?\n",
                 onClick = {
-
+                    context.openEmail("ucphassan@gmail.com")
                 }
             )
         }

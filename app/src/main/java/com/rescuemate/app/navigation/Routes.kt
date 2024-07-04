@@ -46,4 +46,7 @@ object Routes {
     @Serializable
     object AmbulanceRequestScreen
 
+    @Serializable
+    object AmbulanceRequestsScreen
+
 }

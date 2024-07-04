@@ -48,17 +48,22 @@ import com.rescuemate.app.navigation.Routes
 import com.rescuemate.app.presentation.ambulance.AmbulanceDashBoardScreen
 import com.rescuemate.app.presentation.blooddonor.BloodDonorDashBoardScreen
 import com.rescuemate.app.presentation.laboratory.LaboratoryDashBoardScreen
+import com.rescuemate.app.presentation.maps.CheckLocationPermissions
+import com.rescuemate.app.presentation.maps.CheckNotificationPermission
 import com.rescuemate.app.presentation.maps.getAddressFromLatLng
 import com.rescuemate.app.presentation.patient.PatientDashboardScreen
 import com.rescuemate.app.presentation.theme.primaryColor
+import com.rescuemate.app.presentation.viewmodel.FcmVM
 import com.rescuemate.app.presentation.viewmodel.LocationViewModel
 import com.rescuemate.app.presentation.viewmodel.UserStorageVM
+import com.rescuemate.app.presentation.viewmodel.UserViewModel
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun DashboardScreen(
     navHostController: NavHostController,
     locationViewModel: LocationViewModel = hiltViewModel(),
+    fcmVM: FcmVM = hiltViewModel(),
     userStorageVM: UserStorageVM = hiltViewModel(),
 ) {
     val user = userStorageVM.user ?: return
@@ -74,6 +79,13 @@ fun DashboardScreen(
             })
         }
     }
+
+    LaunchedEffect(key1 = Unit) {
+        fcmVM.refreshToken()
+    }
+
+    CheckLocationPermissions()
+    CheckNotificationPermission()
 
     LaunchedEffect(key1 = Unit) {
         locationViewModel.getCurrentLocation()
@@ -164,7 +176,7 @@ fun TopBarContent(user: User, modifier: Modifier = Modifier, currentUserAddress:
                 modifier = Modifier
                     .size(50.dp)
                     .clip(CircleShape)
-                    .clickable(enabled = false){}
+                    .clickable(enabled = false) {}
             )
 
             Spacer(modifier = Modifier.width(2.dp))

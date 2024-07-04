@@ -1,14 +1,20 @@
 package com.rescuemate.app.presentation.maps
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Geocoder
 import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.rescuemate.app.extensions.showToast
 
 @SuppressLint("PermissionLaunchedDuringComposition")
 @OptIn(ExperimentalPermissionsApi::class)
@@ -25,6 +31,33 @@ fun CheckLocationPermissions() {
         locationPermissions.launchMultiplePermissionRequest()
     }
 }
+
+
+@Composable
+fun CheckNotificationPermission() {
+    val context = LocalContext.current
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            context.showToast("Permission Granted!")
+        } else {
+            context.showToast("Permission denied!")
+        }
+    }
+    LaunchedEffect(key1 = Unit) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) != android.content.pm.PackageManager.PERMISSION_GRANTED
+            ) {
+                permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
+    }
+}
+
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 fun getAddressFromLatLng(

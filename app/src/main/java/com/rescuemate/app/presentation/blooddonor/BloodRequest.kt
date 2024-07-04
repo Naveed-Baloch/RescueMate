@@ -51,19 +51,10 @@ fun BloodRequestScreenContent(findDonor: (bloodGroup: String, city: String) -> U
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
-            .padding(vertical = 30.dp)
+            .padding(vertical = 45.dp)
     ) {
         TopBar(modifier = Modifier.padding(horizontal = 20.dp), text = "Find Blood Donor") {
             onBack()
-        }
-        Box(
-            modifier = Modifier
-                .padding(top = 5.dp)
-                .fillMaxWidth()
-                .fillMaxHeight(0.6f)
-                .background(Color.Red)
-        ) {
-
         }
 
         Spacer(modifier = Modifier.height(20.dp))

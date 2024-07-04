@@ -29,6 +29,7 @@ import androidx.navigation.NavHostController
 import com.rescuemate.app.R
 import com.rescuemate.app.dto.User
 import com.rescuemate.app.extensions.isVisible
+import com.rescuemate.app.extensions.openEmail
 import com.rescuemate.app.extensions.progressBar
 import com.rescuemate.app.extensions.showToast
 import com.rescuemate.app.navigation.Routes
@@ -90,12 +91,15 @@ fun LaboratoryDashBoardScreenContent(user: User, laboratoryVM: LaboratoryVM = hi
             horizontalArrangement = Arrangement.SpaceAround,
             verticalArrangement = Arrangement.spacedBy(30.dp)
         ) {
-            ActionButton(
-                imageId = R.drawable.ic_emergency,
-                description = if (laboratoryVM.user == null) "Add Laboratory" else "Edit Laboratory",
-                imageModifier = Modifier.run { size(50.dp).offset(y = (-10).dp) },
-                onClick = actionAddLab
-            )
+            if (laboratoryVM.user == null) {
+                ActionButton(
+                    imageId = R.drawable.ic_emergency,
+                    description = if (laboratoryVM.user == null) "Add Laboratory" else "Edit Laboratory",
+                    imageModifier = Modifier.run { size(50.dp).offset(y = (-10).dp) },
+                    onClick = actionAddLab
+                )
+            }
+
             if (laboratoryVM.userLab != null) {
                 ActionButton(
                     imageId = R.drawable.ic_emergency,
@@ -104,11 +108,12 @@ fun LaboratoryDashBoardScreenContent(user: User, laboratoryVM: LaboratoryVM = hi
                     onClick = actionAddTest
                 )
             }
+
             ActionButton(
                 imageId = R.drawable.ic_rescue,
                 description = "Need Help?\n",
                 onClick = {
-
+                    context.openEmail("ucphassan@gmail.com")
                 }
             )
 

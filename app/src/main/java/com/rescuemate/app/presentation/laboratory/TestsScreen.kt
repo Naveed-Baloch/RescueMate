@@ -79,7 +79,7 @@ fun TestsScreen(
         progressBar.isVisible(keepShowingLoading)
     }
 
-    LazyColumn(modifier = Modifier.padding(vertical = 30.dp, horizontal = 20.dp)) {
+    LazyColumn(modifier = Modifier.padding(vertical = 40.dp, horizontal = 20.dp)) {
         item {
             Box(modifier = Modifier.height(60.dp)) {
                 TopBar(text = "Laboratory's Tests") {

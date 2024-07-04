@@ -1,21 +1,16 @@
 package com.rescuemate.app.repository.ambulance
 
 import android.content.Context
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.ValueEventListener
 import com.rescuemate.app.dto.Ambulance
 import com.rescuemate.app.dto.AmbulanceRequest
-import com.rescuemate.app.dto.Laboratory
-import com.rescuemate.app.dto.LaboratoryTest
+import com.rescuemate.app.dto.AmbulanceRequestStatus
 import com.rescuemate.app.repository.Result
 import com.rescuemate.app.utils.FirebaseRef
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import java.util.UUID
 import javax.inject.Inject
 
 class AmbulanceRepositoryImpl @Inject constructor(
@@ -81,12 +76,47 @@ class AmbulanceRepositoryImpl @Inject constructor(
 
     override fun addAmbulanceRequest(ambulanceRequest: AmbulanceRequest) = callbackFlow {
         trySend(Result.Loading)
-        databaseReference.child(FirebaseRef.AMBULANCE_REQUESTS).child(UUID.randomUUID().toString()).setValue(ambulanceRequest)
+        databaseReference.child(FirebaseRef.AMBULANCE_REQUESTS).child(ambulanceRequest.id).setValue(ambulanceRequest)
             .addOnSuccessListener {
                 trySend(Result.Success("Request is Submitted!"))
             }.addOnFailureListener {
                 trySend(Result.Failure(it))
             }
+        awaitClose {
+            close()
+        }
+    }
+
+    override fun updateRequestStatus(ambulanceRequestStatus: AmbulanceRequestStatus, requestId : String) = callbackFlow {
+        trySend(Result.Loading)
+        databaseReference.child(FirebaseRef.AMBULANCE_REQUESTS).child(requestId).child("status").setValue(ambulanceRequestStatus)
+            .addOnSuccessListener {
+                trySend(Result.Success("Request is Updated!"))
+            }.addOnFailureListener {
+                trySend(Result.Failure(it))
+            }
+        awaitClose {
+            close()
+        }
+    }
+
+    override fun getAmbulanceOwnerRequest(ownerId: String): Flow<Result<List<AmbulanceRequest>>> = callbackFlow {
+        val ambulanceRequests = mutableListOf<AmbulanceRequest>()
+        databaseReference.child(FirebaseRef.AMBULANCE_REQUESTS).get().addOnSuccessListener { dataSnapshot ->
+            if (dataSnapshot.exists()) {
+                for (ds in dataSnapshot.children) {
+                    val ambulanceRequest: AmbulanceRequest? = ds.getValue(AmbulanceRequest::class.java)
+                    if (ambulanceRequest != null && ambulanceRequest.ambulance.ownerId == ownerId) {
+                        ambulanceRequests.add(ambulanceRequest)
+                    }
+                }
+                trySend(Result.Success(ambulanceRequests))
+            } else {
+                trySend(Result.Failure(Exception("No Requests Found")))
+            }
+        }.addOnFailureListener {
+            trySend(Result.Failure(it))
+        }
         awaitClose {
             close()
         }

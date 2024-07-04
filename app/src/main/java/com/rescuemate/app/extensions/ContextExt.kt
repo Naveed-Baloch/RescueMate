@@ -35,3 +35,17 @@ fun Context.openEmail(emailAddress: String){
     }
     startActivity(Intent.createChooser(emailIntent, "Send feedback"))
 }
+
+fun Context.openWhatsApp(phoneNumber: String) {
+    val url = "https://wa.me/$phoneNumber"
+    val intent = Intent(Intent.ACTION_VIEW).apply {
+        data = Uri.parse(url)
+        setPackage("com.whatsapp")
+    }
+    if (intent.resolveActivity(packageManager) != null) {
+        startActivity(intent)
+    } else {
+        // Handle the case where WhatsApp is not installed
+        Toast.makeText(this, "WhatsApp is not installed", Toast.LENGTH_SHORT).show()
+    }
+}

@@ -44,16 +44,16 @@ import com.rescuemate.app.dto.BloodDonor
 import com.rescuemate.app.extensions.clickableWithOutRipple
 import com.rescuemate.app.extensions.isVisible
 import com.rescuemate.app.extensions.openDialPanel
+import com.rescuemate.app.extensions.openWhatsApp
 import com.rescuemate.app.extensions.progressBar
 import com.rescuemate.app.presentation.theme.RescueMateTheme
 import com.rescuemate.app.presentation.theme.primaryColor
 import com.rescuemate.app.presentation.viewmodel.BloodVM
 import com.rescuemate.app.repository.Result
 import com.rescuemate.app.utils.TopBar
-import com.rescuemate.app.utils.openWhatsApp
 
 @Composable
-fun BloodDonorsScreen(bloodGroup: String,city: String, bloodVM: BloodVM = hiltViewModel(), navController: NavHostController) {
+fun BloodDonorsScreen(bloodGroup: String, city: String, bloodVM: BloodVM = hiltViewModel(), navController: NavHostController) {
     val context = LocalContext.current
     val progressBar = remember { context.progressBar() }
     var isLoading by remember { mutableStateOf(false) }
@@ -69,7 +69,7 @@ fun BloodDonorsScreen(bloodGroup: String,city: String, bloodVM: BloodVM = hiltVi
         }
     }
 
-    LazyColumn(modifier = Modifier.padding(vertical = 30.dp, horizontal = 20.dp)) {
+    LazyColumn(modifier = Modifier.padding(vertical = 40.dp, horizontal = 20.dp)) {
         item {
             Box(modifier = Modifier.height(60.dp)) {
                 TopBar(text = "Matching Donors") {

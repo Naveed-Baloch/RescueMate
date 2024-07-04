@@ -6,6 +6,7 @@ import com.rescuemate.app.network.ApiService
 import com.google.auth.oauth2.GoogleCredentials
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.messaging.FirebaseMessaging
+import com.rescuemate.app.R
 import com.rescuemate.app.dto.User
 import com.rescuemate.app.sharedpref.UserPreferences
 import com.rescuemate.app.utils.FirebaseRef
@@ -39,32 +40,29 @@ class FcmRepositoryImpl @Inject constructor(
         }
 
     override fun refreshFcmToken() {
-        val user = userPreferences.getUser() ?: return
         firebaseMessaging.token.addOnCompleteListener {
             if (it.isComplete) {
                 val token = it.result.toString()
-                updateFcmToken(token, user)
+                updateFcmToken(token)
                 Log.d(TAG, "refreshFcmToken: $token")
             }
         }
     }
 
-    override fun updateFcmToken(token: String, user: User) {
-        val userId = user.userId
+    override fun updateFcmToken(token: String) {
+        val user = userPreferences.getUser() ?: return
         val userDbRef = FirebaseRef.USERS
-        databaseReference.child(userDbRef).child(userId).child(FirebaseRef.TOKEN).setValue(token)
+        databaseReference.child(userDbRef).child(user.userId).child(FirebaseRef.TOKEN)
     }
 
     private fun getAccessToken() = try {
-//        val jsonString = context.applicationContext.resources.openRawResource(
-//            R.raw.service_account
-//        ).bufferedReader().use { it.readText() }
-        // Todo Add the service Account to send push notification
+        val jsonString = context.applicationContext.resources.openRawResource(
+            R.raw.service_account
+        ).bufferedReader().use { it.readText() }
 
         val firebaseMessagingScope = "https://www.googleapis.com/auth/firebase.messaging"
         val googleCredentials = GoogleCredentials
-//            .fromStream(jsonString.byteInputStream(StandardCharsets.UTF_8))
-            .fromStream("jsonString".byteInputStream(StandardCharsets.UTF_8))
+            .fromStream(jsonString.byteInputStream(StandardCharsets.UTF_8))
             .createScoped(listOf(firebaseMessagingScope))
         googleCredentials.refresh()
         googleCredentials.accessToken.tokenValue

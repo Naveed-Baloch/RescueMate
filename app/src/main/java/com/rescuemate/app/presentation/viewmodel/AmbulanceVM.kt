@@ -1,7 +1,6 @@
 package com.rescuemate.app.presentation.viewmodel
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -10,8 +9,6 @@ import androidx.lifecycle.viewModelScope
 import com.rescuemate.app.dto.Ambulance
 import com.rescuemate.app.dto.AmbulanceRequest
 import com.rescuemate.app.dto.AmbulanceRequestStatus
-import com.rescuemate.app.dto.User
-import com.rescuemate.app.dto.UserType
 import com.rescuemate.app.extensions.showToast
 import com.rescuemate.app.repository.Result
 import com.rescuemate.app.repository.ambulance.AmbulanceRepository
@@ -20,6 +17,7 @@ import com.rescuemate.app.sharedpref.UserPreferences
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
@@ -28,6 +26,7 @@ class AmbulanceVM @Inject constructor(
     private val ambulanceRepository: AmbulanceRepository,
     private val authRepository: AuthRepository,
 ) : ViewModel() {
+    var requests by mutableStateOf<List<AmbulanceRequest>>(emptyList())
     var isLoading by mutableStateOf(false)
     var userAmbulance by mutableStateOf<Ambulance?>(null)
     val user by lazy { userPreferences.getUser() }
@@ -43,10 +42,34 @@ class AmbulanceVM @Inject constructor(
         }
     }
 
+    fun getAmbulanceOwnerRequests(context: Context) {
+        viewModelScope.launch {
+            ambulanceRepository.getAmbulanceOwnerRequest(user?.userId ?: "").collect {
+                isLoading = it is Result.Loading
+                when (it) {
+                    is Result.Failure -> {
+                        context.showToast(it.exception.message ?: "Something went wrong!")
+                    }
+
+                    is Result.Success -> {
+                        requests = it.data
+                    }
+
+                    else -> {}
+                }
+            }
+        }
+    }
+
+    fun updatedRequest(newStatus: AmbulanceRequestStatus, requestId: String) = ambulanceRepository.updateRequestStatus(newStatus, requestId).onEach {
+        isLoading = it is Result.Loading
+    }
+
+
     private fun addRequest(ambulanceRequest: AmbulanceRequest) = ambulanceRepository.addAmbulanceRequest(ambulanceRequest)
 
 
-    fun processAddRequest(city: String, lat: Double, lng: Double, address: String, onSuccess: () -> Unit, context: Context) {
+    fun processAddRequest(city: String, lat: Double, lng: Double, address: String, context: Context, onSuccess: (String) -> Unit) {
         isLoading = true
         viewModelScope.launch {
             ambulanceRepository
@@ -54,8 +77,17 @@ class AmbulanceVM @Inject constructor(
                 .collect { ambulanceRes ->
                     when (ambulanceRes) {
                         is Result.Success -> {
+                            val user = user ?: return@collect
                             val ambulance = ambulanceRes.data
-                            val ambulanceRequest = AmbulanceRequest(patient = user!!, ambulance = ambulance, address = address, lat = lat, lag = lng, status = AmbulanceRequestStatus.Pending)
+                            val ambulanceRequest = AmbulanceRequest(
+                                id = UUID.randomUUID().toString(),
+                                patient = user,
+                                ambulance = ambulance,
+                                address = address,
+                                lat = lat,
+                                lag = lng,
+                                status = AmbulanceRequestStatus.Pending
+                            )
 
                             addRequest(ambulanceRequest).collect { addRequestResult ->
                                 when (addRequestResult) {
@@ -74,10 +106,7 @@ class AmbulanceVM @Inject constructor(
 
                                                 is Result.Success -> {
                                                     isLoading = false
-                                                    val ambulanceOwner = ambulanceOwnerRes.data
-                                                    context.showToast("Ambulance is added")
-                                                    onSuccess()
-                                                    // TODO: Send Notification to Ambulance Owner using the FCM Token
+                                                    onSuccess(ambulanceOwnerRes.data.token)
                                                 }
 
                                                 else -> {}

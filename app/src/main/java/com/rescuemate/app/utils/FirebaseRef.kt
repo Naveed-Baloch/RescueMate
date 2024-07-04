@@ -7,5 +7,5 @@ object FirebaseRef {
     const val AMBULANCES = "Ambulances"
     const val BLOOD_DONORS = "Blood Donors"
     const val TOKEN = "token"
-    const val AMBULANCE_REQUESTS = "AmbulanceRequest"
+    const val AMBULANCE_REQUESTS = "AmbulanceRequests"
 }

@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -23,6 +24,7 @@ import androidx.navigation.NavHostController
 import com.rescuemate.app.R
 import com.rescuemate.app.dto.User
 import com.rescuemate.app.dto.mock
+import com.rescuemate.app.extensions.openEmail
 import com.rescuemate.app.navigation.Routes
 import com.rescuemate.app.presentation.theme.RescueMateTheme
 import com.rescuemate.app.presentation.theme.primaryColor
@@ -40,6 +42,7 @@ fun BloodDonorDashBoardScreen(user: User, navHostController: NavHostController) 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun BloodDonorDashBoardScreenContent(user: User, actionAddDonor: () -> Unit) {
+    val context = LocalContext.current
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(50.dp, Alignment.CenterVertically),
@@ -74,7 +77,7 @@ fun BloodDonorDashBoardScreenContent(user: User, actionAddDonor: () -> Unit) {
                 imageId = R.drawable.ic_rescue,
                 description = "Need Help?\n",
                 onClick = {
-
+                    context.openEmail("ucphassan@gmail.com")
                 }
             )
         }
