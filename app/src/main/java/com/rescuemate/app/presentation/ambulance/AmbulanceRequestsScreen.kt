@@ -120,29 +120,41 @@ fun AmbulanceRequestsScreen(
             }, onUpdatedReq = { newStatus ->
                 scope.launch {
                     ambulanceVM.updatedRequest(newStatus, selectedRequest!!.id).collect {
-                        when(it){
+                        when (it) {
                             is Result.Failure -> {
                                 context.showToast(it.exception.message ?: "Failed to update Request Try again!")
                             }
-                            is Result.Success -> {
 
-                                val notificationReq = NotificationReq(
-                                    message = Message(
-                                        token = selectedRequest!!.patient.token,
-                                        notification = Notification(
-                                            title = "Your ambulance Request is ${newStatus.name}!",
-                                            body = if (newStatus == AmbulanceRequestStatus.Accepted) "Ambulance will arrive soon!" else "Please place new Request!"
-                                        )
-                                    )
-                                )
-                                ambulanceVM.getAmbulanceOwnerRequests(context)
-                                fcmVM.sendPushNotification(notificationReq)
-                                context.showToast("Request is updated")
-                                selectedRequest = null
+                            is Result.Success -> {
+                                ambulanceVM.getUserDetails(selectedRequest!!.patient.userId).collect { userResult ->
+                                    when (userResult) {
+                                        is Result.Failure -> {
+                                            context.showToast(userResult.exception.message ?: "Something went wrong")
+                                        }
+
+                                        is Result.Success -> {
+                                            val notificationReq = NotificationReq(
+                                                message = Message(
+                                                    token = userResult.data.token,
+                                                    notification = Notification(
+                                                        title = "Your ambulance Request is ${newStatus.name}!",
+                                                        body = if (newStatus == AmbulanceRequestStatus.Accepted) "Ambulance will arrive soon!" else "Please place new Request!"
+                                                    )
+                                                )
+                                            )
+                                            ambulanceVM.getAmbulanceOwnerRequests(context)
+                                            fcmVM.sendPushNotification(notificationReq)
+                                            context.showToast("Request is updated")
+                                            selectedRequest = null
+                                        }
+
+                                        else -> {}
+                                    }
+                                }
                             }
+
                             else -> {}
                         }
-
                     }
                 }
             })
@@ -172,7 +184,7 @@ fun AmbulanceRequestItem(ambulanceRequest: AmbulanceRequest, onClick: () -> Unit
                 verticalAlignment = Alignment.Top,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Row(modifier = Modifier,verticalAlignment = Alignment.CenterVertically) {
+                Row(modifier = Modifier, verticalAlignment = Alignment.CenterVertically) {
                     AsyncImage(
                         model = ambulanceRequest.patient.profilePicUrl,
                         contentDescription = "",

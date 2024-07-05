@@ -42,10 +42,5 @@ fun Context.openWhatsApp(phoneNumber: String) {
         data = Uri.parse(url)
         setPackage("com.whatsapp")
     }
-    if (intent.resolveActivity(packageManager) != null) {
-        startActivity(intent)
-    } else {
-        // Handle the case where WhatsApp is not installed
-        Toast.makeText(this, "WhatsApp is not installed", Toast.LENGTH_SHORT).show()
-    }
+    startActivity(intent)
 }

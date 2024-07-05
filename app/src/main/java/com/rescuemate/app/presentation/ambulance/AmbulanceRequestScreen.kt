@@ -13,7 +13,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,7 +33,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -42,7 +46,6 @@ import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.rescuemate.app.R
-import com.rescuemate.app.dto.User
 import com.rescuemate.app.extensions.clickableWithOutRipple
 import com.rescuemate.app.extensions.isVisible
 import com.rescuemate.app.extensions.progressBar
@@ -58,7 +61,6 @@ import com.rescuemate.app.repository.fcm.NotificationReq
 import com.rescuemate.app.utils.CityDropDown
 import com.rescuemate.app.utils.CustomEditText
 import com.rescuemate.app.utils.TopBar
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -74,6 +76,7 @@ fun AmbulanceRequestScreen(
     var lng by remember { mutableDoubleStateOf(0.0) }
     var address by remember { mutableStateOf("") }
     var checkLocationPermissions by remember { mutableStateOf(false) }
+    var showRequestSubmittedDialog by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     val markerState by remember(lng, lat) { mutableStateOf(MarkerState(position = LatLng(lat, lng))) }
     val cameraPosition = remember { LatLng(31.5204, 74.3587) }
@@ -204,8 +207,7 @@ fun AmbulanceRequestScreen(
                                 )
                                 scope.launch {
                                     fcmVM.sendPushNotification(notificationReq)
-                                    navHostController.popBackStack()
-                                    context.showToast("Your request is placed!")
+                                    showRequestSubmittedDialog = true
                                 }
                             }
 
@@ -227,8 +229,65 @@ fun AmbulanceRequestScreen(
             }
         }
     }
+
+    if (showRequestSubmittedDialog) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.1f))
+        ) {
+            RequestAddedDialog(onDismissRequest = {
+                showRequestSubmittedDialog = false
+                navHostController.popBackStack()
+            })
+        }
+    }
+
 }
 
-private fun addRequest(scope: CoroutineScope, ambulanceVM: AmbulanceVM, user: User, ) {
+@Composable
+fun RequestAddedDialog(onDismissRequest: () -> Unit) {
+    Dialog(onDismissRequest = onDismissRequest) {
+        Column(
+            modifier = Modifier
+                .clip(RoundedCornerShape(20.dp))
+                .background(Color.White)
+                .padding(horizontal = 20.dp, vertical = 20.dp)
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(modifier = Modifier.height(20.dp))
+            Text(
+                text = "Your Request is Submitted!",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold, textAlign = TextAlign.Center,
+                modifier = Modifier
+            )
+            Spacer(modifier = Modifier.height(20.dp))
+            Text(
+                text = "Ambulance driver will response to your request",
+                style = MaterialTheme.typography.titleMedium.copy(Color.Black.copy(alpha = 0.7f)),
+                modifier = Modifier
+            )
 
+            Spacer(modifier = Modifier.height(20.dp))
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(0.6f)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(Color.Red)
+                    .clickableWithOutRipple { onDismissRequest() },
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "Ok".uppercase(),
+                    color = Color.White, fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.headlineSmall,
+                    modifier = Modifier
+                        .padding(vertical = 10.dp)
+                )
+            }
+        }
+    }
 }

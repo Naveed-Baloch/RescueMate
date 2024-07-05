@@ -65,6 +65,7 @@ class AmbulanceVM @Inject constructor(
         isLoading = it is Result.Loading
     }
 
+    fun getUserDetails(userId: String) = authRepository.fetchUserDetails(userId = userId)
 
     private fun addRequest(ambulanceRequest: AmbulanceRequest) = ambulanceRepository.addAmbulanceRequest(ambulanceRequest)
 
@@ -97,7 +98,7 @@ class AmbulanceVM @Inject constructor(
                                     }
 
                                     is Result.Success -> {
-                                        authRepository.fetchUserDetails(ambulance.ownerId).collect { ambulanceOwnerRes ->
+                                        getUserDetails(ambulance.ownerId).collect { ambulanceOwnerRes ->
                                             when (ambulanceOwnerRes) {
                                                 is Result.Failure -> {
                                                     isLoading = false

@@ -52,7 +52,7 @@ class FcmRepositoryImpl @Inject constructor(
     override fun updateFcmToken(token: String) {
         val user = userPreferences.getUser() ?: return
         val userDbRef = FirebaseRef.USERS
-        databaseReference.child(userDbRef).child(user.userId).child(FirebaseRef.TOKEN)
+        databaseReference.child(userDbRef).child(user.userId).child(FirebaseRef.TOKEN).setValue(token)
     }
 
     private fun getAccessToken() = try {

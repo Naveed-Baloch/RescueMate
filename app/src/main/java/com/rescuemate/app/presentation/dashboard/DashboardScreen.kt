@@ -80,7 +80,7 @@ fun DashboardScreen(
         }
     }
 
-    LaunchedEffect(key1 = Unit) {
+    LaunchedEffect(key1 = user) {
         fcmVM.refreshToken()
     }
 
