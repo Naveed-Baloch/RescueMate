@@ -162,7 +162,7 @@ fun TopBarContent(user: User, modifier: Modifier = Modifier, currentUserAddress:
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 20.dp, horizontal = 8.dp),
+            .padding(vertical = 0.dp, horizontal = 8.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
 

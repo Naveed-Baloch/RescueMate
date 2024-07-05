@@ -117,13 +117,13 @@ fun AmbulanceRequestScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White).padding(top = 10.dp),
+            .background(Color.White).padding(top = 5.dp),
         verticalArrangement = Arrangement.Top
     ) {
         Box(
             modifier = Modifier
-                .height(60.dp)
-                .padding(start = 10.dp, top = 30.dp)
+                .height(45.dp)
+                .padding(start = 10.dp)
         ) {
             TopBar(text = "Request Ambulance") { navHostController.navigateUp() }
         }
@@ -135,17 +135,16 @@ fun AmbulanceRequestScreen(
                 lng = it.longitude
             },
             modifier = Modifier
-                .padding(top = 10.dp)
                 .fillMaxWidth()
-                .fillMaxHeight(0.55f),
+                .fillMaxHeight(0.6f),
         ) {
             if (lat != 0.0 && lng != 0.0) {
                 Marker(state = markerState)
             }
         }
 
-        Column(modifier = Modifier.padding(horizontal = 20.dp)) {
-            Spacer(modifier = Modifier.height(20.dp))
+        Column(modifier = Modifier.verticalScroll(rememberScrollState()).padding(horizontal = 20.dp)) {
+            Spacer(modifier = Modifier.height(10.dp))
             Text(
                 text = "Select city",
                 style = MaterialTheme.typography.titleMedium.copy(Color.Black.copy(alpha = 0.7f)),
@@ -157,7 +156,7 @@ fun AmbulanceRequestScreen(
                 onCitySelected = { city = it }
             )
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
             Text(
                 text = "Current Address",
@@ -184,7 +183,7 @@ fun AmbulanceRequestScreen(
                 }
             )
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(10.dp))
             Box(
                 modifier = Modifier
                     .fillMaxWidth()

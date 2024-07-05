@@ -13,7 +13,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -71,7 +73,7 @@ fun LaboratoriesScreen(
         }
     }
 
-    LazyColumn(modifier = Modifier.padding(vertical = 40.dp, horizontal = 20.dp)) {
+    LazyColumn(modifier = Modifier.padding(vertical = 10.dp, horizontal = 20.dp)) {
         item {
             Box(modifier = Modifier.height(60.dp)) {
                 TopBar(text = "Test Centers near by") {

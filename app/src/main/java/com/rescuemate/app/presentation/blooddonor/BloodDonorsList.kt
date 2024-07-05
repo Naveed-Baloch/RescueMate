@@ -69,9 +69,9 @@ fun BloodDonorsScreen(bloodGroup: String, city: String, bloodVM: BloodVM = hiltV
         }
     }
 
-    LazyColumn(modifier = Modifier.padding(vertical = 40.dp, horizontal = 20.dp)) {
+    LazyColumn(modifier = Modifier.padding(vertical = 10.dp, horizontal = 20.dp)) {
         item {
-            Box(modifier = Modifier.height(60.dp)) {
+            Box(modifier = Modifier.height(45.dp)) {
                 TopBar(text = "Matching Donors") {
                     navController.navigateUp()
                 }

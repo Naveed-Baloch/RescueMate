@@ -53,7 +53,7 @@ fun LaboratoryRequestScreenContent(findLaboratory: (city: String, laboratoryTest
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
-            .padding(vertical = 45.dp)
+            .padding(vertical = 10.dp)
     ) {
         TopBar(modifier = Modifier.padding(horizontal = 20.dp), text = "Find Test Center") {
             onBack()
