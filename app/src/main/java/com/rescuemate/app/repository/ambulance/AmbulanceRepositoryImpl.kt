@@ -5,6 +5,7 @@ import com.google.firebase.database.DatabaseReference
 import com.rescuemate.app.dto.Ambulance
 import com.rescuemate.app.dto.AmbulanceRequest
 import com.rescuemate.app.dto.AmbulanceRequestStatus
+import com.rescuemate.app.dto.UserType
 import com.rescuemate.app.repository.Result
 import com.rescuemate.app.utils.FirebaseRef
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -100,13 +101,15 @@ class AmbulanceRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getAmbulanceOwnerRequest(ownerId: String): Flow<Result<List<AmbulanceRequest>>> = callbackFlow {
+    override fun getAmbulanceOwnerRequest(ownerId: String, userType: UserType): Flow<Result<List<AmbulanceRequest>>> = callbackFlow {
         val ambulanceRequests = mutableListOf<AmbulanceRequest>()
         databaseReference.child(FirebaseRef.AMBULANCE_REQUESTS).get().addOnSuccessListener { dataSnapshot ->
             if (dataSnapshot.exists()) {
                 for (ds in dataSnapshot.children) {
                     val ambulanceRequest: AmbulanceRequest? = ds.getValue(AmbulanceRequest::class.java)
-                    if (ambulanceRequest != null && ambulanceRequest.ambulance.ownerId == ownerId) {
+                    val isAmbulanceOwner = userType == UserType.AmbulanceOwner && ambulanceRequest?.ambulance?.ownerId == ownerId
+                    val isPatient = userType == UserType.Patient && ambulanceRequest?.patient?.userId == ownerId
+                    if (ambulanceRequest != null && (isAmbulanceOwner || isPatient)) {
                         ambulanceRequests.add(ambulanceRequest)
                     }
                 }

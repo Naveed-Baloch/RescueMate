@@ -50,6 +50,9 @@ fun PatientDashboardScreen(contentState: Boolean, navHostController: NavHostCont
 
                 actionFindBloodDonor = {
                     navHostController.navigate(Routes.BloodRequestScreen)
+                },
+                actionAmbulanceRequests = {
+                    navHostController.navigate(Routes.AmbulanceRequestsScreen)
                 }
             )
         }
@@ -114,7 +117,7 @@ fun PatientDashboardScreenContent(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun PatientEmergencyServices(actionRequestAmbulance: () -> Unit, actionFindBloodDonor: () -> Unit) {
+fun PatientEmergencyServices(actionRequestAmbulance: () -> Unit, actionFindBloodDonor: () -> Unit, actionAmbulanceRequests: ()-> Unit) {
     val context = LocalContext.current
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -139,6 +142,13 @@ fun PatientEmergencyServices(actionRequestAmbulance: () -> Unit, actionFindBlood
                 description = "Request Ambulance",
                 onClick = actionRequestAmbulance
             )
+
+            ActionButton(
+                imageId = R.drawable.ic_ambulance,
+                description = "Your Requests",
+                onClick = actionAmbulanceRequests
+            )
+
             ActionButton(
                 imageId = R.drawable.ic_blood_donor,
                 description = "Find Blood Donor",

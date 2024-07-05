@@ -190,7 +190,7 @@ fun TopBarContent(user: User, modifier: Modifier = Modifier, currentUserAddress:
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    text = "View/Edit Profile", //
+                    text = "Name", //
                     style = MaterialTheme.typography.bodySmall,
                     color = primaryColor,
                     fontWeight = FontWeight.Bold, textAlign = TextAlign.Center,
@@ -239,13 +239,13 @@ fun BottomNavBar(modifier: Modifier = Modifier, actionLogout: () -> Unit, action
         horizontalArrangement = Arrangement.SpaceAround
     ) {
 
-        Image(
-            painter = painterResource(id = R.drawable.ic_profile),
-            contentDescription = "",
-            modifier = Modifier
-                .size(40.dp)
-                .clickableWithOutRipple { actionProfile() }
-        )
+//        Image(
+//            painter = painterResource(id = R.drawable.ic_profile),
+//            contentDescription = "",
+//            modifier = Modifier
+//                .size(40.dp)
+//                .clickableWithOutRipple { actionProfile() }
+//        )
 
         Image(
             painter = painterResource(id = R.drawable.ic_home),

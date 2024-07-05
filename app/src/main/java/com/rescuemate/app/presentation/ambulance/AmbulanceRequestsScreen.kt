@@ -82,9 +82,9 @@ fun AmbulanceRequestsScreen(
     }
     progressBar.isVisible(ambulanceVM.isLoading)
 
-    LazyColumn(modifier = Modifier.padding(vertical = 30.dp, horizontal = 20.dp)) {
+    LazyColumn(modifier = Modifier.padding(vertical = 10.dp, horizontal = 20.dp)) {
         item {
-            Box(modifier = Modifier.height(60.dp)) {
+            Box(modifier = Modifier.height(40.dp)) {
                 TopBar(text = "Ambulance Requests") {
                     navController.navigateUp()
                 }
@@ -109,13 +109,15 @@ fun AmbulanceRequestsScreen(
         }
     }
 
+
     AnimatedVisibility(
         visible = selectedRequest != null,
         enter = slideInHorizontally { it },
     ) {
+        val user = ambulanceVM.user ?: return@AnimatedVisibility
         val request = selectedRequest ?: return@AnimatedVisibility
         Surface {
-            AmbulanceRequestDetailScreen(ambulanceRequest = request, onBack = {
+            AmbulanceRequestDetailScreen(ambulanceRequest = request, userType = user.userType, onBack = {
                 selectedRequest = null
             }, onUpdatedReq = { newStatus ->
                 scope.launch {

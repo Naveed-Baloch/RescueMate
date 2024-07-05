@@ -12,8 +12,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
@@ -26,18 +28,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
+import com.rescuemate.app.R
 import com.rescuemate.app.dto.AmbulanceRequest
 import com.rescuemate.app.dto.AmbulanceRequestStatus
+import com.rescuemate.app.dto.UserType
 import com.rescuemate.app.extensions.clickableWithOutRipple
 import com.rescuemate.app.extensions.openDialPanel
 import com.rescuemate.app.extensions.openWhatsApp
@@ -45,7 +52,12 @@ import com.rescuemate.app.presentation.theme.primaryColor
 import com.rescuemate.app.utils.TopBar
 
 @Composable
-fun AmbulanceRequestDetailScreen(ambulanceRequest: AmbulanceRequest, onBack: () -> Unit, onUpdatedReq: (AmbulanceRequestStatus) -> Unit) {
+fun AmbulanceRequestDetailScreen(
+    userType: UserType,
+    ambulanceRequest: AmbulanceRequest,
+    onBack: () -> Unit,
+    onUpdatedReq: (AmbulanceRequestStatus) -> Unit,
+) {
 
     val latLng = remember { LatLng(ambulanceRequest.lat, ambulanceRequest.lag) }
     val markerState by remember { mutableStateOf(MarkerState(position = latLng)) }
@@ -55,14 +67,13 @@ fun AmbulanceRequestDetailScreen(ambulanceRequest: AmbulanceRequest, onBack: () 
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
-            .verticalScroll(rememberScrollState())
             .clickable(enabled = false) { },
         verticalArrangement = Arrangement.Top
     ) {
         Box(
             modifier = Modifier
-                .height(60.dp)
-                .padding(start = 10.dp, top = 30.dp)
+                .height(40.dp)
+                .padding(start = 10.dp, top = 5.dp)
         ) {
             TopBar(text = "Request Details", onBack = onBack)
         }
@@ -70,9 +81,8 @@ fun AmbulanceRequestDetailScreen(ambulanceRequest: AmbulanceRequest, onBack: () 
         GoogleMap(
             cameraPositionState = cameraPositionState,
             modifier = Modifier
-                .padding(top = 10.dp)
                 .fillMaxWidth()
-                .fillMaxHeight(0.75f),
+                .fillMaxHeight(0.65f),
         ) {
             Marker(state = markerState)
         }
@@ -82,16 +92,33 @@ fun AmbulanceRequestDetailScreen(ambulanceRequest: AmbulanceRequest, onBack: () 
         ) {
 
             Spacer(modifier = Modifier.height(1.dp))
-            Text(
-                text = "Name: ${ambulanceRequest.patient.name}",
-                style = MaterialTheme.typography.bodyMedium,
-                maxLines = 2,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 10.dp),
-                overflow = TextOverflow.Ellipsis
-            )
+
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                if(userType == UserType.Patient) {
+                    AsyncImage(
+                        model = ambulanceRequest.ambulanceOwner.profilePicUrl,
+                        contentDescription = "",
+                        placeholder = painterResource(id = R.drawable.ic_profile),
+                        error = painterResource(id = R.drawable.ic_profile),
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .size(50.dp)
+                            .clip(CircleShape)
+                            .clickableWithOutRipple { }
+                    )
+                }
+                val name = if(userType == UserType.Patient) ambulanceRequest.ambulanceOwner.name else ambulanceRequest.patient.name
+                Text(
+                    text = "Name: $name",
+                    style = MaterialTheme.typography.bodyMedium,
+                    maxLines = 2,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 10.dp),
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
 
             Text(
                 text = "Address: ${ambulanceRequest.address}",
@@ -115,7 +142,8 @@ fun AmbulanceRequestDetailScreen(ambulanceRequest: AmbulanceRequest, onBack: () 
                         .clip(RoundedCornerShape(10.dp))
                         .background(primaryColor)
                         .clickableWithOutRipple {
-                            context.openWhatsApp(ambulanceRequest.patient.phoneNumber)
+                            val phoneNumber = if (userType == UserType.Patient) ambulanceRequest.ambulanceOwner.phoneNumber else ambulanceRequest.patient.phoneNumber
+                            context.openWhatsApp(phoneNumber)
                         },
                     contentAlignment = Alignment.Center
                 ) {
@@ -133,7 +161,8 @@ fun AmbulanceRequestDetailScreen(ambulanceRequest: AmbulanceRequest, onBack: () 
                         .clip(RoundedCornerShape(10.dp))
                         .background(primaryColor)
                         .clickableWithOutRipple {
-                            context.openDialPanel(ambulanceRequest.patient.phoneNumber)
+                            val phoneNumber = if (userType == UserType.Patient) ambulanceRequest.ambulanceOwner.phoneNumber else ambulanceRequest.patient.phoneNumber
+                            context.openDialPanel(phoneNumber)
                         },
                     contentAlignment = Alignment.Center
                 ) {
@@ -151,7 +180,7 @@ fun AmbulanceRequestDetailScreen(ambulanceRequest: AmbulanceRequest, onBack: () 
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(20.dp, Alignment.CenterHorizontally)
             ) {
-                if (ambulanceRequest.status == AmbulanceRequestStatus.Pending) {
+                if (ambulanceRequest.status == AmbulanceRequestStatus.Pending && userType == UserType.AmbulanceOwner) {
                     Box(
                         modifier = Modifier
                             .width(150.dp)
@@ -184,7 +213,7 @@ fun AmbulanceRequestDetailScreen(ambulanceRequest: AmbulanceRequest, onBack: () 
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = if (ambulanceRequest.status == AmbulanceRequestStatus.Pending) "Accept" else ambulanceRequest.status.name.uppercase(),
+                        text = if (ambulanceRequest.status == AmbulanceRequestStatus.Pending && userType == UserType.AmbulanceOwner) "Accept" else ambulanceRequest.status.name.uppercase(),
                         color = Color.White, fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.titleMedium,
                         modifier = Modifier.padding(vertical = 5.dp)

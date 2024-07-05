@@ -43,8 +43,9 @@ class AmbulanceVM @Inject constructor(
     }
 
     fun getAmbulanceOwnerRequests(context: Context) {
+        val user = user?:return
         viewModelScope.launch {
-            ambulanceRepository.getAmbulanceOwnerRequest(user?.userId ?: "").collect {
+            ambulanceRepository.getAmbulanceOwnerRequest(user.userId, userType = user.userType).collect {
                 isLoading = it is Result.Loading
                 when (it) {
                     is Result.Failure -> {
@@ -80,29 +81,30 @@ class AmbulanceVM @Inject constructor(
                         is Result.Success -> {
                             val user = user ?: return@collect
                             val ambulance = ambulanceRes.data
-                            val ambulanceRequest = AmbulanceRequest(
-                                id = UUID.randomUUID().toString(),
-                                patient = user,
-                                ambulance = ambulance,
-                                address = address,
-                                lat = lat,
-                                lag = lng,
-                                status = AmbulanceRequestStatus.Pending
-                            )
-
-                            addRequest(ambulanceRequest).collect { addRequestResult ->
-                                when (addRequestResult) {
+                            getUserDetails(ambulance.ownerId).collect { ambulanceOwnerRes ->
+                                when (ambulanceOwnerRes) {
                                     is Result.Failure -> {
                                         isLoading = false
-                                        context.showToast(addRequestResult.exception.message ?: "Something went wrong")
+                                        context.showToast(ambulanceOwnerRes.exception.message ?: "Something went wrong")
                                     }
 
                                     is Result.Success -> {
-                                        getUserDetails(ambulance.ownerId).collect { ambulanceOwnerRes ->
-                                            when (ambulanceOwnerRes) {
+                                        val ambulanceRequest = AmbulanceRequest(
+                                            id = UUID.randomUUID().toString(),
+                                            patient = user,
+                                            ambulance = ambulance,
+                                            address = address,
+                                            lat = lat,
+                                            lag = lng,
+                                            ambulanceOwner = ambulanceOwnerRes.data,
+                                            status = AmbulanceRequestStatus.Pending
+                                        )
+
+                                        addRequest(ambulanceRequest).collect { addRequestResult ->
+                                            when (addRequestResult) {
                                                 is Result.Failure -> {
                                                     isLoading = false
-                                                    context.showToast(ambulanceOwnerRes.exception.message ?: "Something went wrong")
+                                                    context.showToast(addRequestResult.exception.message ?: "Something went wrong")
                                                 }
 
                                                 is Result.Success -> {
@@ -113,11 +115,14 @@ class AmbulanceVM @Inject constructor(
                                                 else -> {}
                                             }
                                         }
+
                                     }
 
                                     else -> {}
                                 }
                             }
+
+
                         }
 
                         is Result.Failure -> {
