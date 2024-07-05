@@ -125,7 +125,7 @@ fun AmbulanceRequestScreen(
                 .height(60.dp)
                 .padding(start = 10.dp, top = 30.dp)
         ) {
-            TopBar(text = "Request Ambulance") { navHostController.popBackStack() }
+            TopBar(text = "Request Ambulance") { navHostController.navigateUp() }
         }
 
         GoogleMap(
@@ -238,7 +238,7 @@ fun AmbulanceRequestScreen(
         ) {
             RequestAddedDialog(onDismissRequest = {
                 showRequestSubmittedDialog = false
-                navHostController.popBackStack()
+                navHostController.navigateUp()
             })
         }
     }

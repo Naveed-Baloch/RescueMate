@@ -38,7 +38,7 @@ fun BloodRequestScreen(navHostController: NavHostController) {
         findDonor = { bloodGroup, city ->
             navHostController.navigate(Routes.BloodDonorsScreen(bloodGroup, city))
         },
-        onBack = { navHostController.popBackStack() }
+        onBack = { navHostController.navigateUp() }
     )
 }
 

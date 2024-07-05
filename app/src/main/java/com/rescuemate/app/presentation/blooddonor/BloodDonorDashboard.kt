@@ -63,16 +63,16 @@ fun BloodDonorDashBoardScreenContent(user: User, actionAddDonor: () -> Unit) {
         ) {
             ActionButton(
                 imageId = R.drawable.ic_rescue,
-                description = "Add your \nDonor Profile",
+                description = "Add Donor",
                 onClick = { actionAddDonor() }
             )
-            ActionButton(
-                imageId = R.drawable.ic_blood_donor,
-                description = "Update your \nDonor Profile",
-                onClick = {
-
-                }
-            )
+//            ActionButton(
+//                imageId = R.drawable.ic_blood_donor,
+//                description = "Update your \nDonor Profile",
+//                onClick = {
+//
+//                }
+//            )
             ActionButton(
                 imageId = R.drawable.ic_rescue,
                 description = "Need Help?\n",

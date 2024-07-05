@@ -86,7 +86,7 @@ fun LaboratoryScreen(
                         is Result.Success -> {
                             context.showToast(it.data)
                             progressBar.dismiss()
-                            navHostController.popBackStack()
+                            navHostController.navigateUp()
                         }
                         else -> {}
                     }
@@ -95,7 +95,7 @@ fun LaboratoryScreen(
 
         },
         onBack = {
-            navHostController.popBackStack()
+            navHostController.navigateUp()
         }
     )
 }

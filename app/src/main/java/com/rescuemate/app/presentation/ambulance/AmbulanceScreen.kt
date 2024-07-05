@@ -76,7 +76,7 @@ fun AmbulanceScreen(
                         is Result.Success -> {
                             context.showToast(it.data)
                             progressBar.dismiss()
-                            navHostController.popBackStack()
+                            navHostController.navigateUp()
                         }
                         else -> {}
                     }
@@ -85,7 +85,7 @@ fun AmbulanceScreen(
 
         },
         onBack = {
-            navHostController.popBackStack()
+            navHostController.navigateUp()
         }
     )
 }

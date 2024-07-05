@@ -75,7 +75,7 @@ fun LaboratoriesScreen(
         item {
             Box(modifier = Modifier.height(60.dp)) {
                 TopBar(text = "Test Centers near by") {
-                    navController.popBackStack()
+                    navController.navigateUp()
                 }
             }
 

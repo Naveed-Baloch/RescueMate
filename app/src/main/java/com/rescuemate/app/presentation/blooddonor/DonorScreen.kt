@@ -104,7 +104,7 @@ fun BloodDonorScreen(
                         is Result.Success -> {
                             context.showToast(it.data)
                             progressBar.dismiss()
-                            navHostController.popBackStack()
+                            navHostController.navigateUp()
                         }
 
                         else -> {}
@@ -114,7 +114,7 @@ fun BloodDonorScreen(
             }
         },
         onBack = {
-            navHostController.popBackStack()
+            navHostController.navigateUp()
         },
     )
 }

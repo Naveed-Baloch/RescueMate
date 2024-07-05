@@ -94,7 +94,7 @@ fun SignUpScreen(
 
     SignUpScreenContent(
         onSignIn = {
-            navHostController.popBackStack()
+            navHostController.navigateUp()
         },
         onSignUp = { user ->
             signup(

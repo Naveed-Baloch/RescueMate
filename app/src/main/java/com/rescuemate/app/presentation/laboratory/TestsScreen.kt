@@ -83,7 +83,7 @@ fun TestsScreen(
         item {
             Box(modifier = Modifier.height(60.dp)) {
                 TopBar(text = "Laboratory's Tests") {
-                    navController.popBackStack()
+                    navController.navigateUp()
                 }
             }
         }

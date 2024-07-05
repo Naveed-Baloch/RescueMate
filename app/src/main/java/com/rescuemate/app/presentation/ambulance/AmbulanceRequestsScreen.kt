@@ -86,7 +86,7 @@ fun AmbulanceRequestsScreen(
         item {
             Box(modifier = Modifier.height(60.dp)) {
                 TopBar(text = "Ambulance Requests") {
-                    navController.popBackStack()
+                    navController.navigateUp()
                 }
             }
         }

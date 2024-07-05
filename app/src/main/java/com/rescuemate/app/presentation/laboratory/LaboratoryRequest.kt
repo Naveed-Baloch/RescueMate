@@ -40,7 +40,7 @@ fun LaboratoryRequest(navHostController: NavHostController) {
         findLaboratory = { city , laboratoryTest->
             navHostController.navigate(Routes.LaboratoriesScreen(city, laboratoryTest))
         },
-        onBack = { navHostController.popBackStack() }
+        onBack = { navHostController.navigateUp() }
     )
 }
 

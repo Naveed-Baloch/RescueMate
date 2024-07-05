@@ -73,7 +73,7 @@ fun BloodDonorsScreen(bloodGroup: String, city: String, bloodVM: BloodVM = hiltV
         item {
             Box(modifier = Modifier.height(60.dp)) {
                 TopBar(text = "Matching Donors") {
-                    navController.popBackStack()
+                    navController.navigateUp()
                 }
             }
 
