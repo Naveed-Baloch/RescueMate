@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -29,6 +28,7 @@ import androidx.navigation.NavHostController
 import com.rescuemate.app.extensions.clickableWithOutRipple
 import com.rescuemate.app.extensions.showToast
 import com.rescuemate.app.navigation.Routes
+import com.rescuemate.app.navigation.DonorSearchRequestParams
 import com.rescuemate.app.utils.CityDropDown
 import com.rescuemate.app.utils.TopBar
 
@@ -36,7 +36,7 @@ import com.rescuemate.app.utils.TopBar
 fun BloodRequestScreen(navHostController: NavHostController) {
     BloodRequestScreenContent(
         findDonor = { bloodGroup, city ->
-            navHostController.navigate(Routes.BloodDonorsScreen(bloodGroup, city))
+            navHostController.navigate(Routes.BloodDonorsScreen(DonorSearchRequestParams(bloodGroup = bloodGroup, city = city)))
         },
         onBack = { navHostController.navigateUp() }
     )

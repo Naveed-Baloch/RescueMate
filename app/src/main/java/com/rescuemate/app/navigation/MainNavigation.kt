@@ -21,6 +21,7 @@ import com.rescuemate.app.presentation.laboratory.LaboratoriesScreen
 import com.rescuemate.app.presentation.laboratory.TestsScreen
 import com.rescuemate.app.presentation.laboratory.LaboratoryRequest
 import com.rescuemate.app.presentation.laboratory.LaboratoryScreen
+import kotlin.reflect.typeOf
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
@@ -45,11 +46,11 @@ fun MainNavigation(navController: NavHostController) {
             DashboardScreen(navHostController = navController)
         }
 
-        composable<Routes.BloodDonorsScreen> { backStackEntry ->
-            val args: Routes.BloodDonorsScreen = backStackEntry.toRoute()
-            val city = args.city
-            val bloodGroup = args.bloodGroup
-            BloodDonorsScreen(navController = navController, bloodGroup = bloodGroup, city = city)
+        composable<Routes.BloodDonorsScreen>(
+            typeMap = mapOf(typeOf<DonorSearchRequestParams>() to CustomNavType(clazz = DonorSearchRequestParams::class.java, serializer = DonorSearchRequestParams.serializer()))
+        ) { backStackEntry ->
+            val args = backStackEntry.toRoute<Routes.BloodDonorsScreen>()
+            BloodDonorsScreen(navController = navController, donorSearchRequestParams = args.donorSearchRequestParams)
         }
 
         composable<Routes.BloodDonorScreen> {

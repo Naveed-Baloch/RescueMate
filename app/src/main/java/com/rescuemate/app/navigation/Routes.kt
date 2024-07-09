@@ -1,6 +1,7 @@
 package com.rescuemate.app.navigation
 
-import com.rescuemate.app.dto.User
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 
 object Routes {
@@ -17,7 +18,7 @@ object Routes {
     object DashBoardScreen
 
     @Serializable
-    data class BloodDonorsScreen(val bloodGroup: String, val city: String)
+    data class BloodDonorsScreen(val donorSearchRequestParams: DonorSearchRequestParams)
 
     @Serializable
     object BloodDonorScreen
@@ -31,7 +32,6 @@ object Routes {
 
     @Serializable
     data class LaboratoriesScreen(val city: String, val laboratoryTest: String)
-
 
     @Serializable
     object LaboratoryRequestScreen
@@ -50,3 +50,10 @@ object Routes {
     object AmbulanceRequestsScreen
 
 }
+
+@Serializable
+@Parcelize
+data class DonorSearchRequestParams(
+    val bloodGroup: String,
+    val city: String,
+) : Parcelable

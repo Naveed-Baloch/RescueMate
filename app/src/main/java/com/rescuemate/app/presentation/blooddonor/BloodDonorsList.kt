@@ -46,6 +46,7 @@ import com.rescuemate.app.extensions.isVisible
 import com.rescuemate.app.extensions.openDialPanel
 import com.rescuemate.app.extensions.openWhatsApp
 import com.rescuemate.app.extensions.progressBar
+import com.rescuemate.app.navigation.DonorSearchRequestParams
 import com.rescuemate.app.presentation.theme.RescueMateTheme
 import com.rescuemate.app.presentation.theme.primaryColor
 import com.rescuemate.app.presentation.viewmodel.BloodVM
@@ -53,7 +54,7 @@ import com.rescuemate.app.repository.Result
 import com.rescuemate.app.utils.TopBar
 
 @Composable
-fun BloodDonorsScreen(bloodGroup: String, city: String, bloodVM: BloodVM = hiltViewModel(), navController: NavHostController) {
+fun BloodDonorsScreen(donorSearchRequestParams: DonorSearchRequestParams, bloodVM: BloodVM = hiltViewModel(), navController: NavHostController) {
     val context = LocalContext.current
     val progressBar = remember { context.progressBar() }
     var isLoading by remember { mutableStateOf(false) }
@@ -61,7 +62,7 @@ fun BloodDonorsScreen(bloodGroup: String, city: String, bloodVM: BloodVM = hiltV
     LaunchedEffect(key1 = Unit) {
         isLoading = true
         progressBar.isVisible(true)
-        bloodVM.getBloodDonors(bloodGroup = bloodGroup, city = city).collect {
+        bloodVM.getBloodDonors(bloodGroup = donorSearchRequestParams.bloodGroup, city = donorSearchRequestParams.city).collect {
             if (it !is Result.Loading) {
                 isLoading = false
                 progressBar.dismiss()
