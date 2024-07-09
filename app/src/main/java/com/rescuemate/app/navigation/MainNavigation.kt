@@ -7,6 +7,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import com.rescuemate.app.dto.User
 import com.rescuemate.app.presentation.SplashScreen
 import com.rescuemate.app.presentation.ambulance.AmbulanceRequestScreen
 import com.rescuemate.app.presentation.ambulance.AmbulanceRequestsScreen
@@ -42,8 +43,11 @@ fun MainNavigation(navController: NavHostController) {
             SignUpScreen(navController)
         }
 
-        composable<Routes.DashBoardScreen> {
-            DashboardScreen(navHostController = navController)
+        composable<Routes.DashBoardScreen>(
+            typeMap = mapOf(typeOf<User>() to CustomNavType(clazz = User::class.java, serializer = User.serializer()))
+        ) { backStackEntry ->
+            val args = backStackEntry.toRoute<Routes.DashBoardScreen>()
+            DashboardScreen(navHostController = navController, user = args.user)
         }
 
         composable<Routes.BloodDonorsScreen>(
@@ -78,8 +82,11 @@ fun MainNavigation(navController: NavHostController) {
             TestsScreen(navController = navController)
         }
 
-        composable<Routes.AmbulanceScreen> {
-            AmbulanceScreen(navHostController = navController)
+        composable<Routes.AmbulanceScreen>(
+            typeMap = mapOf(typeOf<User>() to CustomNavType(clazz = User::class.java, serializer = User.serializer()))
+        ) { backStackEntry ->
+            val args = backStackEntry.toRoute<Routes.AmbulanceScreen>()
+            AmbulanceScreen(navHostController = navController, user = args.user)
         }
 
         composable<Routes.AmbulanceRequestScreen> {

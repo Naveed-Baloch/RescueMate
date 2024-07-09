@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.rescuemate.app.dto.Ambulance
+import com.rescuemate.app.dto.User
 import com.rescuemate.app.extensions.clickableWithOutRipple
 import com.rescuemate.app.extensions.isVisible
 import com.rescuemate.app.extensions.progressBar
@@ -47,10 +48,10 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun AmbulanceScreen(
+    user: User,
     navHostController: NavHostController,
     ambulanceVM: AmbulanceVM = hiltViewModel(),
 ) {
-    val user = ambulanceVM.user ?: return
     val context = LocalContext.current
     val progressBar = remember { context.progressBar() }
     val scope = rememberCoroutineScope()

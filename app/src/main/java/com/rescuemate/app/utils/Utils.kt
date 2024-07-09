@@ -1,10 +1,6 @@
 package com.rescuemate.app.utils
 
-import android.content.Context
-import android.content.Intent
 import android.location.Location
-import android.net.Uri
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -26,48 +22,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit
-import java.util.TimeZone
+import java.net.URLDecoder
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 fun isValidEmail(email: String): Boolean {
     val emailRegex = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+".toRegex()
     return email.matches(emailRegex)
 }
 
-fun isValidText(text: String): Boolean {
-    return text.matches(Regex("[a-zA-Z ]+"))
-}
+fun String.encode() = URLEncoder.encode(this, StandardCharsets.UTF_8.toString())
 
-
-fun getInboxRelativeTime(firebaseTime: String): String {
-    // Parse the API timestamp
-    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-    val apiDateTime = LocalDateTime.parse(firebaseTime, formatter)
-
-    // Get the current time
-    val currentDateTime = LocalDateTime.now(ZoneId.of(TimeZone.getDefault().id))
-
-    // Calculate the difference
-    val years = ChronoUnit.YEARS.between(apiDateTime, currentDateTime)
-    val months = ChronoUnit.MONTHS.between(apiDateTime, currentDateTime)
-    val weeks = ChronoUnit.WEEKS.between(apiDateTime, currentDateTime)
-    val days = ChronoUnit.DAYS.between(apiDateTime, currentDateTime)
-    val hours = ChronoUnit.HOURS.between(apiDateTime, currentDateTime)
-    val minutes = ChronoUnit.MINUTES.between(apiDateTime, currentDateTime)
-
-    return when {
-        years > 0 -> "${years}y"
-        months > 0 -> "${months}m"
-        weeks > 0 -> "${weeks}w"
-        days > 0 -> "${days}d"
-        hours > 0 -> "${hours}h"
-        minutes > 0 -> "${minutes}min"
-        else -> "just now"
-    }
-}
+fun String.decode() = URLDecoder.decode(this, StandardCharsets.UTF_8.toString())
 
 enum class City {
     Lahore,
@@ -176,8 +142,6 @@ fun LaboratoryTestDropDown(
         }
     }
 }
-
-
 
 interface LocationTracker {
     suspend fun getCurrentLocation(): Location?

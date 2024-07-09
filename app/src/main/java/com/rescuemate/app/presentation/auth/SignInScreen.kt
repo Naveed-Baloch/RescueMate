@@ -42,6 +42,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.rescuemate.app.R
 import com.rescuemate.app.dto.User
+import com.rescuemate.app.dto.getEncodedUser
 import com.rescuemate.app.extensions.clickableWithOutRipple
 import com.rescuemate.app.extensions.isVisible
 import com.rescuemate.app.extensions.progressBar
@@ -52,7 +53,6 @@ import com.rescuemate.app.presentation.viewmodel.UserStorageVM
 import com.rescuemate.app.presentation.viewmodel.UserViewModel
 import com.rescuemate.app.repository.Result
 import com.rescuemate.app.utils.CustomEditText
-import com.rescuemate.app.utils.FirebaseRef
 import com.rescuemate.app.utils.isValidEmail
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
@@ -94,7 +94,7 @@ fun SignInScreen(
                                 progressBar.dismiss()
                                 userStorageVM.removeUserData()
                                 userStorageVM.setUser(user = user)
-                                navHostController.navigate(Routes.DashBoardScreen) {
+                                navHostController.navigate(Routes.DashBoardScreen(user = user.getEncodedUser())) {
                                     popUpTo(navHostController.graph.id)
                                 }
                             }

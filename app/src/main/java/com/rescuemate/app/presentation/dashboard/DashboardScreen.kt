@@ -56,7 +56,6 @@ import com.rescuemate.app.presentation.theme.primaryColor
 import com.rescuemate.app.presentation.viewmodel.FcmVM
 import com.rescuemate.app.presentation.viewmodel.LocationViewModel
 import com.rescuemate.app.presentation.viewmodel.UserStorageVM
-import com.rescuemate.app.presentation.viewmodel.UserViewModel
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
@@ -64,14 +63,14 @@ fun DashboardScreen(
     navHostController: NavHostController,
     locationViewModel: LocationViewModel = hiltViewModel(),
     fcmVM: FcmVM = hiltViewModel(),
+    user: User,
     userStorageVM: UserStorageVM = hiltViewModel(),
 ) {
-    val user = userStorageVM.user ?: return
     val context = LocalContext.current
     val currentLocation = locationViewModel.currentLocation
     var currentUserAddress by remember { mutableStateOf("") }
     LaunchedEffect(key1 = currentLocation) {
-        if(currentLocation != null) {
+        if (currentLocation != null) {
             val lat = currentLocation.latitude
             val lng = currentLocation.longitude
             getAddressFromLatLng(lat = lat, lng = lng, context = context, onAddressReceive = {
@@ -121,7 +120,7 @@ fun DashboardScreenContent(user: User, actionLogout: () -> Unit, actionProfile: 
                 .align(Alignment.TopCenter)
                 .padding(top = 20.dp)
         )
-        MainContent(navHostController = navHostController, contentState = contentState , user = user, modifier = Modifier.align(Alignment.Center))
+        MainContent(navHostController = navHostController, contentState = contentState, user = user, modifier = Modifier.align(Alignment.Center))
         BottomNavBar(
             modifier = Modifier.align(Alignment.BottomCenter),
             actionLogout = actionLogout,
@@ -166,7 +165,7 @@ fun TopBarContent(user: User, modifier: Modifier = Modifier, currentUserAddress:
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
 
-        Row(verticalAlignment = Alignment.CenterVertically){
+        Row(verticalAlignment = Alignment.CenterVertically) {
             AsyncImage(
                 model = user.profilePicUrl,
                 contentDescription = "",
@@ -200,8 +199,8 @@ fun TopBarContent(user: User, modifier: Modifier = Modifier, currentUserAddress:
                 )
             }
         }
-        if(currentUserAddress.isNotEmpty()) {
-            Row(verticalAlignment = Alignment.CenterVertically){
+        if (currentUserAddress.isNotEmpty()) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 Column {
                     Text(
                         text = currentUserAddress,

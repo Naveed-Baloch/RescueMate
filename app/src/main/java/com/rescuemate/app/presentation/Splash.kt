@@ -24,6 +24,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.rescuemate.app.R
+import com.rescuemate.app.dto.User
+import com.rescuemate.app.dto.getEncodedUser
+import com.rescuemate.app.dto.mock
 import com.rescuemate.app.navigation.Routes
 import com.rescuemate.app.presentation.viewmodel.UserStorageVM
 import kotlinx.coroutines.delay
@@ -41,7 +44,7 @@ fun SplashScreen(
                 popUpTo(navHostController.graph.id)
             }
         } else {
-            navHostController.navigate(Routes.DashBoardScreen) {
+            navHostController.navigate(Routes.DashBoardScreen(user = user.getEncodedUser())) {
                 popUpTo(navHostController.graph.id)
             }
         }

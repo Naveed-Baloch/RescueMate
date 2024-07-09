@@ -54,6 +54,7 @@ import com.rescuemate.app.utils.isValidEmail
 import com.rescuemate.app.R
 import com.rescuemate.app.dto.User
 import com.rescuemate.app.dto.UserType
+import com.rescuemate.app.dto.getEncodedUser
 import com.rescuemate.app.extensions.clickableWithOutRipple
 import com.rescuemate.app.extensions.progressBar
 import com.rescuemate.app.extensions.showToast
@@ -102,11 +103,11 @@ fun SignUpScreen(
                 user = user,
                 context = context,
                 userVM = userViewModel,
-            ) { updatedUser->
+            ) { updatedUser ->
                 userStorageVM.setUser(updatedUser)
                 keepShowingLoading = false
                 Log.d("SignUpScreen", "SignUpScreen: with user: $updatedUser")
-                navHostController.navigate(Routes.DashBoardScreen) {
+                navHostController.navigate(Routes.DashBoardScreen(user = updatedUser.getEncodedUser())) {
                     popUpTo(navHostController.graph.id)
                 }
             }
