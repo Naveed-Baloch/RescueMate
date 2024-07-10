@@ -2,10 +2,14 @@ package com.rescuemate.app.navigation
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.layout.Box
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.core.net.toUri
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
 import com.rescuemate.app.dto.User
 import com.rescuemate.app.presentation.SplashScreen
@@ -95,6 +99,15 @@ fun MainNavigation(navController: NavHostController) {
 
         composable<Routes.AmbulanceRequestsScreen> {
             AmbulanceRequestsScreen(navController = navController)
+        }
+
+        composable<Routes.TestScreen>(
+            deepLinks = listOf(navDeepLink { uriPattern = "https://rescuemate/{id}" })
+        ) { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id")
+            Box {
+                Text(text = id.orEmpty())
+            }
         }
 
     }

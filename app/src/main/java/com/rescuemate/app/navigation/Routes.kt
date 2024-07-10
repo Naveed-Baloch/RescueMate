@@ -50,6 +50,9 @@ object Routes {
     @Serializable
     object AmbulanceRequestsScreen
 
+    @Serializable
+    data class TestScreen(val id: String)
+
 }
 
 @Serializable
