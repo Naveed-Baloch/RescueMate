@@ -18,6 +18,7 @@ class BloodRepositoryImpl @Inject constructor(
 ) : BloodRepository {
 
     override fun getBloodDonors(bloodGroup: String, city: String): Flow<Result<List<BloodDonor>>> = callbackFlow {
+        trySend(Result.Loading)
         val bloodDonors = mutableListOf<BloodDonor>()
         databaseReference.child(FirebaseRef.BLOOD_DONORS).get().addOnSuccessListener { dataSnapshot ->
             if (dataSnapshot.exists()) {

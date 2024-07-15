@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface AmbulanceRepository {
     fun getFirstAvailableAmbulance(city: String): Flow<Result<Ambulance>>
+    fun getAmbulanceRequest(requestId: String): Flow<Result<AmbulanceRequest>>
     fun getUserAmbulance(userId: String): Flow<Result<Ambulance>>
     fun addAmbulance(ambulance: Ambulance): Flow<Result<String>>
     fun addAmbulanceRequest(ambulanceRequest: AmbulanceRequest): Flow<Result<String>>

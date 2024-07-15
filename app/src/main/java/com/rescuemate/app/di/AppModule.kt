@@ -2,6 +2,7 @@ package com.rescuemate.app.di
 
 import android.app.Application
 import android.content.Context
+import com.rescuemate.app.messaging.PushNotificationManager
 import com.rescuemate.app.sharedpref.UserPreferences
 import dagger.Module
 import dagger.Provides
@@ -22,6 +23,12 @@ class AppModule {
     @Singleton
     fun provideSharedPref(context: Context): UserPreferences {
         return UserPreferences(context)
+    }
+
+    @Provides
+    @Singleton
+    fun providePushNotificationManager(context: Context): PushNotificationManager {
+        return PushNotificationManager(context)
     }
 
 }

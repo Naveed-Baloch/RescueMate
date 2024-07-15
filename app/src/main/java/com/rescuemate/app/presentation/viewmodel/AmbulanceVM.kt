@@ -42,6 +42,8 @@ class AmbulanceVM @Inject constructor(
         }
     }
 
+    fun getAmbulanceRequest(requestId: String) = ambulanceRepository.getAmbulanceRequest(requestId)
+
     fun getAmbulanceOwnerRequests(context: Context) {
         val user = user?:return
         viewModelScope.launch {
@@ -66,12 +68,13 @@ class AmbulanceVM @Inject constructor(
         isLoading = it is Result.Loading
     }
 
-    fun getUserDetails(userId: String) = authRepository.fetchUserDetails(userId = userId)
+    fun getUserDetails(userId: String) = authRepository.fetchUserDetails(userId = userId).onEach {
+        isLoading = it is Result.Loading
+    }
 
     private fun addRequest(ambulanceRequest: AmbulanceRequest) = ambulanceRepository.addAmbulanceRequest(ambulanceRequest)
 
-
-    fun processAddRequest(city: String, lat: Double, lng: Double, address: String, context: Context, onSuccess: (String) -> Unit) {
+    fun processAddRequest(city: String, lat: Double, lng: Double, address: String, context: Context, onSuccess: (String,String) -> Unit) {
         isLoading = true
         viewModelScope.launch {
             ambulanceRepository
@@ -109,7 +112,7 @@ class AmbulanceVM @Inject constructor(
 
                                                 is Result.Success -> {
                                                     isLoading = false
-                                                    onSuccess(ambulanceOwnerRes.data.token)
+                                                    onSuccess(ambulanceOwnerRes.data.token, ambulanceRequest.id)
                                                 }
 
                                                 else -> {}

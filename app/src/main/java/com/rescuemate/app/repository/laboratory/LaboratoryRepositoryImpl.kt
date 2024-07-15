@@ -23,6 +23,7 @@ class LaboratoryRepositoryImpl @Inject constructor(
 
     override fun getLaboratories(city: String,laboratoryTest :String): Flow<Result<List<Laboratory>>> = callbackFlow {
         val laboratories = mutableListOf<Laboratory>()
+        trySend(Result.Loading)
         databaseReference.child(FirebaseRef.LABORATORIES).get().addOnSuccessListener { dataSnapshot ->
             if (dataSnapshot.exists()) {
                 for (ds in dataSnapshot.children) {
@@ -44,6 +45,7 @@ class LaboratoryRepositoryImpl @Inject constructor(
     }
 
     override fun getUserLaboratory(userId: String): Flow<Result<Laboratory>> = callbackFlow{
+        trySend(Result.Loading)
         databaseReference.child(FirebaseRef.LABORATORIES).child(userId).get().addOnSuccessListener { dataSnapshot ->
             if (dataSnapshot.exists()){
                 val laboratory = dataSnapshot.getValue(Laboratory::class.java)

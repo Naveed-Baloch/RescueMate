@@ -7,7 +7,7 @@ import com.google.auth.oauth2.GoogleCredentials
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.messaging.FirebaseMessaging
 import com.rescuemate.app.R
-import com.rescuemate.app.dto.User
+import com.rescuemate.app.messaging.NotificationReq
 import com.rescuemate.app.sharedpref.UserPreferences
 import com.rescuemate.app.utils.FirebaseRef
 import dagger.hilt.android.qualifiers.ApplicationContext

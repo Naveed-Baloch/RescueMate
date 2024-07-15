@@ -6,7 +6,9 @@ import androidx.core.content.edit
 import com.rescuemate.app.dto.User
 import com.rescuemate.app.extensions.readObject
 import com.rescuemate.app.extensions.writeObject
+import javax.inject.Singleton
 
+@Singleton
 class UserPreferences(context: Context) {
     companion object {
         const val USER_DATA = "user_data"
@@ -20,4 +22,7 @@ class UserPreferences(context: Context) {
     fun removeUserData() {
         sharedPreferences.edit().remove(USER_DATA).apply()
     }
+
+    var payloadRequestId: String? = null
+
 }

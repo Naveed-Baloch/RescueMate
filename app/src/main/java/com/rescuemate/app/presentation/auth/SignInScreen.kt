@@ -94,8 +94,15 @@ fun SignInScreen(
                                 progressBar.dismiss()
                                 userStorageVM.removeUserData()
                                 userStorageVM.setUser(user = user)
-                                navHostController.navigate(Routes.DashBoardScreen(user = user.getEncodedUser())) {
-                                    popUpTo(navHostController.graph.id)
+                                val requestPayLoadId = userStorageVM.getPayloadRequestId()
+                                if (!requestPayLoadId.isNullOrEmpty()) {
+                                    navHostController.navigate(Routes.AmbulanceRequestDetailScreen(requestPayLoadId)){
+                                        popUpTo(navHostController.graph.id)
+                                    }
+                                } else {
+                                    navHostController.navigate(Routes.DashBoardScreen(user = user.getEncodedUser())) {
+                                        popUpTo(navHostController.graph.id)
+                                    }
                                 }
                             }
                         }

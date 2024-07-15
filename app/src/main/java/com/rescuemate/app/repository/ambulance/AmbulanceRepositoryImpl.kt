@@ -20,6 +20,7 @@ class AmbulanceRepositoryImpl @Inject constructor(
 ) : AmbulanceRepository {
 
     override fun getFirstAvailableAmbulance(city: String): Flow<Result<Ambulance>> = callbackFlow {
+        trySend(Result.Loading)
         databaseReference.child(FirebaseRef.AMBULANCES).get().addOnSuccessListener { dataSnapshot ->
             if (dataSnapshot.exists()) {
                 var isAmbulanceAvailable = false
@@ -46,6 +47,7 @@ class AmbulanceRepositoryImpl @Inject constructor(
     }
 
     override fun getUserAmbulance(userId: String): Flow<Result<Ambulance>> = callbackFlow {
+        trySend(Result.Loading)
         databaseReference.child(FirebaseRef.AMBULANCES).child(userId).get().addOnSuccessListener { dataSnapshot ->
             if (dataSnapshot.exists()) {
                 val ambulance = dataSnapshot.getValue(Ambulance::class.java)
@@ -103,6 +105,7 @@ class AmbulanceRepositoryImpl @Inject constructor(
 
     override fun getAmbulanceOwnerRequest(ownerId: String, userType: UserType): Flow<Result<List<AmbulanceRequest>>> = callbackFlow {
         val ambulanceRequests = mutableListOf<AmbulanceRequest>()
+        trySend(Result.Loading)
         databaseReference.child(FirebaseRef.AMBULANCE_REQUESTS).get().addOnSuccessListener { dataSnapshot ->
             if (dataSnapshot.exists()) {
                 for (ds in dataSnapshot.children) {
@@ -119,6 +122,23 @@ class AmbulanceRepositoryImpl @Inject constructor(
             }
         }.addOnFailureListener {
             trySend(Result.Failure(it))
+        }
+        awaitClose {
+            close()
+        }
+    }
+
+    override fun getAmbulanceRequest(requestId: String): Flow<Result<AmbulanceRequest>> = callbackFlow {
+        trySend(Result.Loading)
+        databaseReference.child(FirebaseRef.AMBULANCE_REQUESTS).child(requestId).get().addOnSuccessListener { dataSnapshot ->
+            if (dataSnapshot.exists()) {
+                val ambulanceRequest = dataSnapshot.getValue(AmbulanceRequest::class.java)
+                ambulanceRequest?.let { trySend(Result.Success(ambulanceRequest)) }
+            } else {
+                trySend(Result.Failure(java.lang.Exception("You Don't have any AmbulanceRequest")))
+            }
+        }.addOnFailureListener {
+            Result.Failure(it)
         }
         awaitClose {
             close()

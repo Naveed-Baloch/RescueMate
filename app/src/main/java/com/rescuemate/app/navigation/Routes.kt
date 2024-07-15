@@ -1,6 +1,7 @@
 package com.rescuemate.app.navigation
 
 import android.os.Parcelable
+import com.rescuemate.app.dto.AmbulanceRequest
 import com.rescuemate.app.dto.User
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
@@ -51,8 +52,7 @@ object Routes {
     object AmbulanceRequestsScreen
 
     @Serializable
-    data class TestScreen(val id: String)
-
+    data class AmbulanceRequestDetailScreen(val id: String)
 }
 
 @Serializable

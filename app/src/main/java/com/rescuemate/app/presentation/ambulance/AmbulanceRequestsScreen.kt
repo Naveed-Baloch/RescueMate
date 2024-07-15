@@ -58,23 +58,20 @@ import com.rescuemate.app.presentation.theme.RescueMateTheme
 import com.rescuemate.app.presentation.viewmodel.AmbulanceVM
 import com.rescuemate.app.presentation.viewmodel.FcmVM
 import com.rescuemate.app.repository.Result
-import com.rescuemate.app.repository.fcm.Message
-import com.rescuemate.app.repository.fcm.Notification
-import com.rescuemate.app.repository.fcm.NotificationReq
+import com.rescuemate.app.messaging.Message
+import com.rescuemate.app.messaging.Notification
+import com.rescuemate.app.messaging.NotificationReq
+import com.rescuemate.app.navigation.Routes
 import com.rescuemate.app.utils.TopBar
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @Composable
 fun AmbulanceRequestsScreen(
     ambulanceVM: AmbulanceVM = hiltViewModel(),
-    fcmVM: FcmVM = hiltViewModel(),
     navController: NavHostController,
 ) {
     val context = LocalContext.current
     val progressBar = remember { context.progressBar() }
-    var selectedRequest by remember { mutableStateOf<AmbulanceRequest?>(null) }
-    val scope = rememberCoroutineScope()
     val requests = ambulanceVM.requests
 
     LaunchedEffect(key1 = Unit) {
@@ -82,7 +79,7 @@ fun AmbulanceRequestsScreen(
     }
     progressBar.isVisible(ambulanceVM.isLoading)
 
-    LazyColumn(modifier = Modifier.padding(vertical = 10.dp, horizontal = 20.dp)) {
+    LazyColumn(modifier = Modifier.padding(vertical = 10.dp, horizontal = 10.dp)) {
         item {
             Box(modifier = Modifier.height(40.dp)) {
                 TopBar(text = "Ambulance Requests") {
@@ -92,7 +89,7 @@ fun AmbulanceRequestsScreen(
         }
         items(requests) { ambulanceRequest ->
             AmbulanceRequestItem(ambulanceRequest = ambulanceRequest) {
-                selectedRequest = ambulanceRequest
+                navController.navigate(Routes.AmbulanceRequestDetailScreen(id = ambulanceRequest.id))
             }
             Spacer(modifier = Modifier.height(10.dp))
         }
@@ -106,60 +103,6 @@ fun AmbulanceRequestsScreen(
     if (!ambulanceVM.isLoading && requests.isEmpty()) {
         Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
             Text(text = "No Requests Found", style = MaterialTheme.typography.bodyMedium, textAlign = TextAlign.Center)
-        }
-    }
-
-
-    AnimatedVisibility(
-        visible = selectedRequest != null,
-        enter = slideInHorizontally { it },
-    ) {
-        val user = ambulanceVM.user ?: return@AnimatedVisibility
-        val request = selectedRequest ?: return@AnimatedVisibility
-        Surface {
-            AmbulanceRequestDetailScreen(ambulanceRequest = request, userType = user.userType, onBack = {
-                selectedRequest = null
-            }, onUpdatedReq = { newStatus ->
-                scope.launch {
-                    ambulanceVM.updatedRequest(newStatus, selectedRequest!!.id).collect {
-                        when (it) {
-                            is Result.Failure -> {
-                                context.showToast(it.exception.message ?: "Failed to update Request Try again!")
-                            }
-
-                            is Result.Success -> {
-                                ambulanceVM.getUserDetails(selectedRequest!!.patient.userId).collect { userResult ->
-                                    when (userResult) {
-                                        is Result.Failure -> {
-                                            context.showToast(userResult.exception.message ?: "Something went wrong")
-                                        }
-
-                                        is Result.Success -> {
-                                            val notificationReq = NotificationReq(
-                                                message = Message(
-                                                    token = userResult.data.token,
-                                                    notification = Notification(
-                                                        title = "Your ambulance Request is ${newStatus.name}!",
-                                                        body = if (newStatus == AmbulanceRequestStatus.Accepted) "Ambulance will arrive soon!" else "Please place new Request!"
-                                                    )
-                                                )
-                                            )
-                                            ambulanceVM.getAmbulanceOwnerRequests(context)
-                                            fcmVM.sendPushNotification(notificationReq)
-                                            context.showToast("Request is updated")
-                                            selectedRequest = null
-                                        }
-
-                                        else -> {}
-                                    }
-                                }
-                            }
-
-                            else -> {}
-                        }
-                    }
-                }
-            })
         }
     }
 
@@ -214,7 +157,7 @@ fun AmbulanceRequestItem(ambulanceRequest: AmbulanceRequest, onClick: () -> Unit
                             maxLines = 2, color = Color.DarkGray, textAlign = TextAlign.Start,
                             modifier = Modifier
                                 .padding(start = 10.dp)
-                                .widthIn(max = 180.dp),
+                                .widthIn(max = 160.dp),
                             overflow = TextOverflow.Ellipsis
                         )
                     }

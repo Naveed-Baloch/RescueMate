@@ -55,9 +55,9 @@ import com.rescuemate.app.presentation.maps.getAddressFromLatLng
 import com.rescuemate.app.presentation.viewmodel.AmbulanceVM
 import com.rescuemate.app.presentation.viewmodel.FcmVM
 import com.rescuemate.app.presentation.viewmodel.LocationViewModel
-import com.rescuemate.app.repository.fcm.Message
-import com.rescuemate.app.repository.fcm.Notification
-import com.rescuemate.app.repository.fcm.NotificationReq
+import com.rescuemate.app.messaging.Message
+import com.rescuemate.app.messaging.Notification
+import com.rescuemate.app.messaging.NotificationReq
 import com.rescuemate.app.utils.CityDropDown
 import com.rescuemate.app.utils.CustomEditText
 import com.rescuemate.app.utils.TopBar
@@ -197,11 +197,12 @@ fun AmbulanceRequestScreen(
                                 lng = lng,
                                 address = address,
                                 context = context
-                            ) { ambulanceOwnerToken ->
+                            ) { ambulanceOwnerToken , requestId ->
                                 val notificationReq = NotificationReq(
                                     message = Message(
                                         token = ambulanceOwnerToken,
-                                        notification = Notification(title = "You have new ambulance request from ${ambulanceVM.user?.name}", body = "At: $address")
+                                        notification = Notification(title = "You have new ambulance request from ${ambulanceVM.user?.name}", body = "At: $address"),
+                                        data = mapOf("requestId" to requestId)
                                     )
                                 )
                                 scope.launch {

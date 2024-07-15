@@ -13,4 +13,9 @@ class UserStorageVM @Inject constructor(private val userPreferences: UserPrefere
     fun setUser(user: User) = userPreferences.updateUser(user)
     fun removeUserData() = userPreferences.removeUserData()
 
+    fun getPayloadRequestId() = userPreferences.payloadRequestId
+    fun setPayloadRequestId(value: String?) {
+        userPreferences.payloadRequestId = value
+    }
+
 }

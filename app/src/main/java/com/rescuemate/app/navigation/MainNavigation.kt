@@ -5,14 +5,20 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.net.toUri
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
+import com.google.gson.Gson
+import com.rescuemate.app.dto.AmbulanceRequest
 import com.rescuemate.app.dto.User
+import com.rescuemate.app.extensions.getActivity
 import com.rescuemate.app.presentation.SplashScreen
+import com.rescuemate.app.presentation.ambulance.AmbulanceRequestDetailScreen
 import com.rescuemate.app.presentation.ambulance.AmbulanceRequestScreen
 import com.rescuemate.app.presentation.ambulance.AmbulanceRequestsScreen
 import com.rescuemate.app.presentation.ambulance.AmbulanceScreen
@@ -26,6 +32,9 @@ import com.rescuemate.app.presentation.laboratory.LaboratoriesScreen
 import com.rescuemate.app.presentation.laboratory.TestsScreen
 import com.rescuemate.app.presentation.laboratory.LaboratoryRequest
 import com.rescuemate.app.presentation.laboratory.LaboratoryScreen
+import com.rescuemate.app.presentation.viewmodel.UserStorageVM
+import com.rescuemate.app.presentation.viewmodel.UserViewModel
+import org.json.JSONObject
 import kotlin.reflect.typeOf
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -101,13 +110,11 @@ fun MainNavigation(navController: NavHostController) {
             AmbulanceRequestsScreen(navController = navController)
         }
 
-        composable<Routes.TestScreen>(
-            deepLinks = listOf(navDeepLink { uriPattern = "https://rescuemate/{id}" })
+        composable<Routes.AmbulanceRequestDetailScreen>(
+            deepLinks = listOf(navDeepLink { uriPattern = "https://rescuemate/request/{id}" })
         ) { backStackEntry ->
-            val id = backStackEntry.arguments?.getString("id")
-            Box {
-                Text(text = id.orEmpty())
-            }
+            val args = backStackEntry.toRoute<Routes.AmbulanceRequestDetailScreen>()
+            AmbulanceRequestDetailScreen(requestId = args.id, navHostController = navController)
         }
 
     }

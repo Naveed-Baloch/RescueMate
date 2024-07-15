@@ -1,11 +1,9 @@
 package com.rescuemate.app.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.rescuemate.app.repository.fcm.FcmRepository
-import com.rescuemate.app.repository.fcm.NotificationReq
+import com.rescuemate.app.messaging.NotificationReq
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
