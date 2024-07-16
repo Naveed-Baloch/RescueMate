@@ -3,6 +3,7 @@ package com.rescuemate.app.messaging
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.app.TaskStackBuilder
 import android.content.Context
 import android.content.Intent
 import android.media.RingtoneManager
@@ -39,7 +40,8 @@ class PushNotificationManager @Inject constructor(
             .apply {
                 if(data.isNotEmpty()) {
                     val intent = Intent(context, MainActivity::class.java).apply {
-                        this.data  = Uri.parse("https://rescuemate/request/${data["requestId"]}")
+                        this.data  = Uri.parse("https://rescuemate/request/id=${data["requestId"]}")
+                        this.putExtra("requestId", data["requestId"])
                     }
                     val activity = PendingIntent.getActivity(context, notificationID, intent, PendingIntent.FLAG_IMMUTABLE)
                     this.setContentIntent(activity)

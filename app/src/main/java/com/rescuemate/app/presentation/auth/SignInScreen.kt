@@ -1,6 +1,7 @@
 package com.rescuemate.app.presentation.auth
 
 import android.content.Context
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -44,6 +45,7 @@ import com.rescuemate.app.R
 import com.rescuemate.app.dto.User
 import com.rescuemate.app.dto.getEncodedUser
 import com.rescuemate.app.extensions.clickableWithOutRipple
+import com.rescuemate.app.extensions.getActivity
 import com.rescuemate.app.extensions.isVisible
 import com.rescuemate.app.extensions.progressBar
 import com.rescuemate.app.extensions.showToast
@@ -116,6 +118,10 @@ fun SignInScreen(
             navHostController.navigate(Routes.SignUpScreen)
         }
     )
+
+    BackHandler(enabled = true) {
+        context.getActivity()?.finishAffinity()
+    }
 }
 
 fun fetchUserDetails(
