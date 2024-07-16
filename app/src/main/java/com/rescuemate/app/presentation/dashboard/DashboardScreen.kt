@@ -1,7 +1,6 @@
 package com.rescuemate.app.presentation.dashboard
 
 import android.os.Build
-import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -45,13 +44,11 @@ import com.rescuemate.app.R
 import com.rescuemate.app.dto.User
 import com.rescuemate.app.dto.UserType
 import com.rescuemate.app.extensions.clickableWithOutRipple
-import com.rescuemate.app.extensions.getActivity
 import com.rescuemate.app.navigation.Routes
 import com.rescuemate.app.presentation.ambulance.AmbulanceDashBoardScreen
 import com.rescuemate.app.presentation.blooddonor.BloodDonorDashBoardScreen
 import com.rescuemate.app.presentation.laboratory.LaboratoryDashBoardScreen
-import com.rescuemate.app.presentation.maps.CheckLocationPermissions
-import com.rescuemate.app.presentation.maps.CheckNotificationPermission
+import com.rescuemate.app.presentation.maps.Permissions
 import com.rescuemate.app.presentation.maps.getAddressFromLatLng
 import com.rescuemate.app.presentation.patient.PatientDashboardScreen
 import com.rescuemate.app.presentation.theme.primaryColor
@@ -85,8 +82,7 @@ fun DashboardScreen(
         fcmVM.refreshToken()
     }
 
-    CheckLocationPermissions()
-    CheckNotificationPermission()
+    Permissions()
 
     LaunchedEffect(key1 = Unit) {
         locationViewModel.getCurrentLocation()

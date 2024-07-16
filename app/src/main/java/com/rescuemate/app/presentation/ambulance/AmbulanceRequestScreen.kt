@@ -50,7 +50,7 @@ import com.rescuemate.app.extensions.clickableWithOutRipple
 import com.rescuemate.app.extensions.isVisible
 import com.rescuemate.app.extensions.progressBar
 import com.rescuemate.app.extensions.showToast
-import com.rescuemate.app.presentation.maps.CheckLocationPermissions
+import com.rescuemate.app.presentation.maps.Permissions
 import com.rescuemate.app.presentation.maps.getAddressFromLatLng
 import com.rescuemate.app.presentation.viewmodel.AmbulanceVM
 import com.rescuemate.app.presentation.viewmodel.FcmVM
@@ -111,7 +111,7 @@ fun AmbulanceRequestScreen(
     progressBar.isVisible(ambulanceVM.isLoading)
 
     if(checkLocationPermissions) {
-        CheckLocationPermissions()
+        Permissions()
     }
 
     Column(
