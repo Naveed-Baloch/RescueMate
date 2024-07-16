@@ -37,7 +37,7 @@ fun SplashScreen(
     userStorageVM: UserStorageVM = hiltViewModel()
 ) {
     LaunchedEffect(key1 = Unit) {
-        val user = userStorageVM.user
+        val user = userStorageVM.getUser()
         delay(1000)
         if (user == null) {
             navHostController.navigate(Routes.SignInScreen) {

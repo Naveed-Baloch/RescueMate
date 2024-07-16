@@ -81,19 +81,11 @@ fun AmbulanceRequestDetailScreen(
     userStorageVM: UserStorageVM = hiltViewModel(),
     ambulanceVM: AmbulanceVM = hiltViewModel(),
 ) {
-    LaunchedEffect(key1 = Unit) {
-        if(userStorageVM.user == null) {
-            userStorageVM.setPayloadRequestId(requestId)
-            navHostController.navigate(Routes.SignInScreen) {
-                popUpTo(navHostController.graph.id)
-            }
-        }
-    }
+    val context = LocalContext.current
     val user = ambulanceVM.user ?: return
     val userType = user.userType
     var isLoading by remember { mutableStateOf(false) }
     var ambulanceRequest by remember { mutableStateOf<AmbulanceRequest?>(null) }
-    val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(key1 = Unit) {

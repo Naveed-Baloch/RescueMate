@@ -9,7 +9,6 @@ import javax.inject.Inject
 @HiltViewModel
 class UserStorageVM @Inject constructor(private val userPreferences: UserPreferences) :
     ViewModel() {
-    val user by lazy { userPreferences.getUser() }
     fun setUser(user: User) = userPreferences.updateUser(user)
     fun removeUserData() = userPreferences.removeUserData()
 
@@ -17,5 +16,7 @@ class UserStorageVM @Inject constructor(private val userPreferences: UserPrefere
     fun setPayloadRequestId(value: String?) {
         userPreferences.payloadRequestId = value
     }
+
+    fun getUser() = userPreferences.getUser()
 
 }

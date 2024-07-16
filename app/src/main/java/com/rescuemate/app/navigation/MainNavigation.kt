@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -17,6 +18,7 @@ import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
 import com.rescuemate.app.dto.User
 import com.rescuemate.app.extensions.getActivity
+import com.rescuemate.app.extensions.showToast
 import com.rescuemate.app.presentation.SplashScreen
 import com.rescuemate.app.presentation.ambulance.AmbulanceRequestDetailScreen
 import com.rescuemate.app.presentation.ambulance.AmbulanceRequestScreen
@@ -32,6 +34,7 @@ import com.rescuemate.app.presentation.laboratory.LaboratoriesScreen
 import com.rescuemate.app.presentation.laboratory.TestsScreen
 import com.rescuemate.app.presentation.laboratory.LaboratoryRequest
 import com.rescuemate.app.presentation.laboratory.LaboratoryScreen
+import com.rescuemate.app.presentation.viewmodel.UserStorageVM
 import java.util.function.Consumer
 import kotlin.reflect.typeOf
 
@@ -41,7 +44,7 @@ fun MainNavigation(navController: NavHostController) {
     val context = LocalContext.current
     NavHost(
         navController = navController,
-        startDestination = remember { getStartDestination(context) }
+        startDestination = getStartDestination(context)
     ) {
         composable<Routes.SplashScreen> {
             SplashScreen(navController)
@@ -119,17 +122,27 @@ fun MainNavigation(navController: NavHostController) {
 }
 
 /**
- * Handle new intent fired by System tray when app is in background
+ * Handle new intent fired by System tray when app is in foreground
  */
 @Composable
-private fun NewIntentObserver(navController: NavHostController) {
+private fun NewIntentObserver(navController: NavHostController, userStorageVM: UserStorageVM = hiltViewModel()) {
     val context = LocalContext.current
     val activity = context.getActivity()
     DisposableEffect(navController) {
         val listener = { intent: Intent ->
             val payLoadRequestId = intent.extras?.getString("requestId")
-            if (!payLoadRequestId.isNullOrEmpty()) {
-                navController.navigate(Routes.AmbulanceRequestDetailScreen(payLoadRequestId))
+            if (userStorageVM.getUser() == null) {
+                userStorageVM.setPayloadRequestId(payLoadRequestId)
+                if (navController.currentBackStackEntry?.destination?.route != Routes.SignInScreen::class.qualifiedName) {
+                    navController.navigate(Routes.SignInScreen) {
+                        popUpTo(navController.graph.id)
+                    }
+                }
+                context.showToast("Please, Login First!")
+            } else if (!payLoadRequestId.isNullOrEmpty()) {
+                navController.navigate(Routes.AmbulanceRequestDetailScreen(payLoadRequestId)) {
+                    popUpTo(navController.graph.id)
+                }
             }
         }
         activity?.addOnNewIntentListener(listener)
@@ -140,7 +153,18 @@ private fun NewIntentObserver(navController: NavHostController) {
 /**
  * handle new intent fired by System tray when app is in background
  */
-private fun getStartDestination(context: Context): Any {
+@Composable
+private fun getStartDestination(context: Context, userStorageVM: UserStorageVM = hiltViewModel()): Any {
     val payLoadRequestId = context.getActivity()?.intent?.extras?.getString("requestId")
-    return if(!payLoadRequestId.isNullOrEmpty()) Routes.AmbulanceRequestDetailScreen(payLoadRequestId) else Routes.SplashScreen
+    return if (!payLoadRequestId.isNullOrEmpty()) {
+        if (userStorageVM.getUser() == null) {
+            context.showToast("Please, Login First!")
+            userStorageVM.setPayloadRequestId(payLoadRequestId)
+            Routes.SignInScreen
+        } else {
+            Routes.AmbulanceRequestDetailScreen(payLoadRequestId)
+        }
+    } else {
+        Routes.SplashScreen
+    }
 }

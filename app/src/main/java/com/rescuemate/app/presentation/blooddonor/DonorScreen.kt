@@ -67,7 +67,7 @@ fun BloodDonorScreen(
     bloodVM: BloodVM = hiltViewModel(),
     userStorageVM: UserStorageVM = hiltViewModel(),
 ) {
-    val user = userStorageVM.user ?: return
+    val user = userStorageVM.getUser() ?: return
     val context = LocalContext.current
     var keepShowingLoading by remember { mutableStateOf(false) }
     val progressBar = remember { context.progressBar() }
