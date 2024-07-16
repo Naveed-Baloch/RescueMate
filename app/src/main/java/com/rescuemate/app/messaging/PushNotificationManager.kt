@@ -9,6 +9,8 @@ import android.content.Intent
 import android.media.RingtoneManager
 import android.net.Uri
 import android.util.Log
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.NotificationCompat
 import com.google.gson.Gson
 import com.rescuemate.app.MainActivity
@@ -34,7 +36,8 @@ class PushNotificationManager @Inject constructor(
         val notificationBuilder = NotificationCompat.Builder(context, channelId)
             .setContentTitle(title)
             .setContentText(body)
-            .setSmallIcon(R.drawable.ic_rescue)
+            .setColor(Color.Black.toArgb())
+            .setSmallIcon(R.drawable.ic_ambulance)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setSound(notificationSoundUri)
             .apply {

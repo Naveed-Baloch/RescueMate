@@ -119,9 +119,6 @@ fun SignInScreen(
         }
     )
 
-    BackHandler(enabled = true) {
-        context.getActivity()?.finishAffinity()
-    }
 }
 
 fun fetchUserDetails(

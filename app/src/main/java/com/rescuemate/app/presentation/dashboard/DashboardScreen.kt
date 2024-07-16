@@ -107,9 +107,6 @@ fun DashboardScreen(
         }
     )
 
-    BackHandler(enabled = true) {
-        context.getActivity()?.finishAffinity()
-    }
 }
 
 @Composable
