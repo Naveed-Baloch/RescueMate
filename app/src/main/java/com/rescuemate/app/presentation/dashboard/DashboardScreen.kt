@@ -36,13 +36,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.rescuemate.app.R
 import com.rescuemate.app.dto.User
 import com.rescuemate.app.dto.UserType
+import com.rescuemate.app.dto.mock
 import com.rescuemate.app.extensions.clickableWithOutRipple
 import com.rescuemate.app.navigation.Routes
 import com.rescuemate.app.presentation.ambulance.AmbulanceDashBoardScreen
@@ -263,15 +266,15 @@ fun BottomNavBar(modifier: Modifier = Modifier, actionLogout: () -> Unit, action
 }
 
 
-//@Preview
-//@Composable
-//fun DashboardScreenPreview() {
-//    val user = User(
-//        userId = "Rescue Mate",
-//        name = "name",
-//        email = "email",
-//        profilePicUrl = "https://firebasestorage.googleapis.com/v0/b/rescuemate-c1591.appspot.com/o/Users%2FuWO5rYodBORJ2ir3OLHZaalP8kI2?alt=media&token=cf8b6a80-f0cf-450b-b7d3-591e35cdf142",
-//        userType = UserType.Patient,
-//    )
-//    DashboardScreenContent(user = user, actionLogout = {}, actionProfile = {}, navHostController = navHostController)
-//}
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+@Preview
+@Composable
+fun DashboardScreenPreview() {
+    DashboardScreenContent(
+        user = User.mock.copy(userType = UserType.Patient),
+        currentUserAddress = "Ali Town Lahore!",
+        navHostController = rememberNavController(),
+        actionProfile = {},
+        actionLogout = {}
+    )
+}
