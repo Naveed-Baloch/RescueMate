@@ -52,7 +52,6 @@ import com.rescuemate.app.dto.AmbulanceRequest
 import com.rescuemate.app.dto.AmbulanceRequestStatus
 import com.rescuemate.app.dto.User
 import com.rescuemate.app.dto.UserType
-import com.rescuemate.app.dto.getEncodedUser
 import com.rescuemate.app.extensions.clickableWithOutRipple
 import com.rescuemate.app.extensions.isVisible
 import com.rescuemate.app.extensions.openDialPanel
@@ -151,7 +150,7 @@ private fun navigateUp(navHostController: NavHostController, user: User, userSto
     if (shouldNavigateUp) {
         navHostController.navigateUp()
     } else {
-        navHostController.navigate(Routes.DashBoardScreen(user = user.getEncodedUser())) {
+        navHostController.navigate(Routes.DashBoardScreen(user = user)) {
             popUpTo(navHostController.graph.id)
         }
     }

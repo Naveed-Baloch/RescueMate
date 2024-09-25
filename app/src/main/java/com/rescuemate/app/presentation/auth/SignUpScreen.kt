@@ -50,11 +50,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
-import com.rescuemate.app.utils.isValidEmail
 import com.rescuemate.app.R
 import com.rescuemate.app.dto.User
 import com.rescuemate.app.dto.UserType
-import com.rescuemate.app.dto.getEncodedUser
 import com.rescuemate.app.extensions.clickableWithOutRipple
 import com.rescuemate.app.extensions.progressBar
 import com.rescuemate.app.extensions.showToast
@@ -65,6 +63,7 @@ import com.rescuemate.app.presentation.viewmodel.UserViewModel
 import com.rescuemate.app.repository.Result
 import com.rescuemate.app.utils.CustomEditText
 import com.rescuemate.app.utils.UserTypeDropdown
+import com.rescuemate.app.utils.isValidEmail
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -73,20 +72,20 @@ import kotlinx.coroutines.launch
 fun SignUpScreen(
     navHostController: NavHostController,
     userViewModel: UserViewModel = hiltViewModel(),
-    userStorageVM: UserStorageVM = hiltViewModel()
+    userStorageVM: UserStorageVM = hiltViewModel(),
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val progressBar = remember { context.progressBar() }
-    var keepShowingLoading by remember{ mutableStateOf(false) }
+    var keepShowingLoading by remember { mutableStateOf(false) }
 
     LaunchedEffect(key1 = userViewModel.isLoading) {
-        if(!userViewModel.isLoading) delay(1000)
+        if (!userViewModel.isLoading) delay(1000)
         keepShowingLoading = userViewModel.isLoading
     }
 
     LaunchedEffect(key1 = keepShowingLoading) {
-        if(keepShowingLoading) {
+        if (keepShowingLoading) {
             progressBar.show()
         } else {
             progressBar.dismiss()
@@ -107,7 +106,7 @@ fun SignUpScreen(
                 userStorageVM.setUser(updatedUser)
                 keepShowingLoading = false
                 Log.d("SignUpScreen", "SignUpScreen: with user: $updatedUser")
-                navHostController.navigate(Routes.DashBoardScreen(user = updatedUser.getEncodedUser())) {
+                navHostController.navigate(Routes.DashBoardScreen(user = updatedUser)) {
                     popUpTo(navHostController.graph.id)
                 }
             }
@@ -321,7 +320,7 @@ private fun isValidInput(
     name: String,
     email: String,
     password: String,
-    phoneNumber: String
+    phoneNumber: String,
 ): Boolean {
     var isInputValid = false
     when {
@@ -345,48 +344,51 @@ private fun signup(
     user: User,
     context: Context,
     userVM: UserViewModel,
-    onSignUp :(User) -> Unit
+    onSignUp: (User) -> Unit,
 ) {
     scope.launch {
         val uri = Uri.parse(user.profileUri)
-        userVM.signup(user).collect{ signUpRes ->
-            when(signUpRes) {
+        userVM.signup(user).collect { signUpRes ->
+            when (signUpRes) {
                 is Result.Failure -> {
                     context.showToast(message = signUpRes.exception.message ?: "Something went wrong")
                 }
+
                 is Result.Success -> {
                     val userId = signUpRes.data
                     userVM.uploadUserProfile(uri, userId).collect { uploadImageRes ->
-                        when(uploadImageRes) {
+                        when (uploadImageRes) {
                             is Result.Failure -> {
                                 context.showToast(message = uploadImageRes.exception.message ?: "Something went wrong")
                             }
+
                             is Result.Success -> {
                                 val url = uploadImageRes.data
                                 val updatedUser = user.copy(userId = userId, profilePicUrl = url)
-                                userVM.storeUserToDb(updatedUser).collect{ storeUserRes ->
-                                    when(storeUserRes) {
+                                userVM.storeUserToDb(updatedUser).collect { storeUserRes ->
+                                    when (storeUserRes) {
                                         is Result.Failure -> {
                                             context.showToast(message = storeUserRes.exception.message ?: "Something went wrong")
                                         }
+
                                         is Result.Success -> {
                                             context.showToast(message = "Your Account is Created!")
                                             onSignUp(updatedUser)
                                         }
+
                                         else -> {}
                                     }
                                 }
                             }
+
                             else -> {}
                         }
                     }
                 }
+
                 else -> {}
             }
         }
-
-
-
 
 
     }

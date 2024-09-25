@@ -24,9 +24,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.rescuemate.app.R
-import com.rescuemate.app.dto.User
-import com.rescuemate.app.dto.getEncodedUser
-import com.rescuemate.app.dto.mock
 import com.rescuemate.app.navigation.Routes
 import com.rescuemate.app.presentation.viewmodel.UserStorageVM
 import kotlinx.coroutines.delay
@@ -34,7 +31,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun SplashScreen(
     navHostController: NavHostController,
-    userStorageVM: UserStorageVM = hiltViewModel()
+    userStorageVM: UserStorageVM = hiltViewModel(),
 ) {
     LaunchedEffect(key1 = Unit) {
         val user = userStorageVM.getUser()
@@ -44,7 +41,7 @@ fun SplashScreen(
                 popUpTo(navHostController.graph.id)
             }
         } else {
-            navHostController.navigate(Routes.DashBoardScreen(user = user.getEncodedUser())) {
+            navHostController.navigate(Routes.DashBoardScreen(user = user)) {
                 popUpTo(navHostController.graph.id)
             }
         }

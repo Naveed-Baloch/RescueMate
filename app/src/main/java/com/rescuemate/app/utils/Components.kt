@@ -68,11 +68,11 @@ fun CustomEditText(
                 fontWeight = FontWeight.Normal
             )
         },
-        colors = TextFieldDefaults.textFieldColors(
-            cursorColor = Color.Black,
-            focusedIndicatorColor = Color.White,
-            unfocusedIndicatorColor = Color.White
-        ),
+//        colors = TextFieldDefaults.textFieldColors(
+//            cursorColor = Color.Black,
+//            focusedIndicatorColor = Color.White,
+//            unfocusedIndicatorColor = Color.White
+//        ),
         leadingIcon = leadingIcon,
         trailingIcon = trailingIcon,
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType),

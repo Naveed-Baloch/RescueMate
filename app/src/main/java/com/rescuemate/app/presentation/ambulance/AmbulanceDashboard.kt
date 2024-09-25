@@ -28,7 +28,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.rescuemate.app.R
 import com.rescuemate.app.dto.User
-import com.rescuemate.app.dto.getEncodedUser
 import com.rescuemate.app.extensions.isVisible
 import com.rescuemate.app.extensions.openEmail
 import com.rescuemate.app.extensions.progressBar
@@ -89,7 +88,7 @@ fun AmbulanceDashBoardScreen(
                     description = if (ambulanceVM.userAmbulance == null) "Add Ambulance" else "Edit Ambulance",
                     imageModifier = Modifier.run { size(50.dp).offset(y = (-10).dp) },
                     onClick = {
-                        navHostController.navigate(Routes.AmbulanceScreen(user = user.getEncodedUser()))
+                        navHostController.navigate(Routes.AmbulanceScreen(user = user))
                     }
                 )
             }

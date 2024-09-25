@@ -2,8 +2,6 @@ package com.rescuemate.app.dto
 
 import android.os.Parcelable
 import com.google.firebase.database.Exclude
-import com.rescuemate.app.utils.decode
-import com.rescuemate.app.utils.encode
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 
@@ -35,26 +33,12 @@ data class User(
     companion object
 }
 
-fun User.getEncodedUser() = User(
-    userId = userId.encode(),
-    name = name.encode(),
-    email = email.encode(),
-    profileUri = profileUri.encode(),
-    profilePicUrl = profilePicUrl.encode(),
-    cnic = cnic.encode(),
-    userType = userType,
-    password = password.encode(),
-    token = token.encode(),
-    phoneNumber = phoneNumber.encode()
-)
-
-
 val User.Companion.mock by lazy {
     User(
         userId = "dicant",
         name = "Nelson Blanchard",
         email = "avis.nelson@example.com",
-        profileUri = "pulvinar",
+        profileUri = "pulvinar?dsfdsfd",
         profilePicUrl = "https://search.yahoo.com/search?p=usu",
         cnic = "faucibus",
         userType = UserType.Donor,

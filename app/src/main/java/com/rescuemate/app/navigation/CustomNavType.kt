@@ -1,5 +1,6 @@
 package com.rescuemate.app.navigation
 
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
@@ -23,9 +24,9 @@ class CustomNavType<T : Parcelable>(
 
     override fun put(bundle: Bundle, key: String, value: T) = bundle.putParcelable(key, value)
 
-    override fun parseValue(value: String): T = Json.decodeFromString(serializer, value)
+    override fun parseValue(value: String): T = Json.decodeFromString(serializer, Uri.decode(value))
 
-    override fun serializeAsValue(value: T): String = Json.encodeToString(serializer, value)
+    override fun serializeAsValue(value: T): String = Uri.encode(Json.encodeToString(serializer, value))
 
     override val name: String = clazz.name
 }
