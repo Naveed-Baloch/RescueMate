@@ -1,4 +1,9 @@
+@file:OptIn(ExperimentalSerializationApi::class)
+
 package com.rescuemate.app.messaging
+
+import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.ExperimentalSerializationApi
 
 data class NotificationReq(
     val message: Message
@@ -6,11 +11,11 @@ data class NotificationReq(
 
 data class Message(
     val token: String,
-    val notification: Notification,
-    val data: Map<String,Any>
+    val data: Map<String,Any>,
+    @SerializedName("android")
+    val priority: Priority
 )
 
-data class Notification(
-    val title: String,
-    val body: String,
+data class Priority(
+    val priority: String
 )

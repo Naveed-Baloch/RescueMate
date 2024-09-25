@@ -1,7 +1,6 @@
 package com.rescuemate.app.presentation.ambulance
 
 import android.content.Context
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -59,8 +58,8 @@ import com.rescuemate.app.extensions.openWhatsApp
 import com.rescuemate.app.extensions.progressBar
 import com.rescuemate.app.extensions.showToast
 import com.rescuemate.app.messaging.Message
-import com.rescuemate.app.messaging.Notification
 import com.rescuemate.app.messaging.NotificationReq
+import com.rescuemate.app.messaging.Priority
 import com.rescuemate.app.navigation.Routes
 import com.rescuemate.app.presentation.theme.primaryColor
 import com.rescuemate.app.presentation.viewmodel.AmbulanceVM
@@ -183,11 +182,12 @@ private fun updateRequest(
                                 val notificationReq = NotificationReq(
                                     message = Message(
                                         token = userResult.data.token,
-                                        notification = Notification(
-                                            title = "Your ambulance Request is ${status.name}!",
-                                            body = if (status == AmbulanceRequestStatus.Accepted) "Ambulance will arrive soon!" else "Please place new Request!"
+                                        data = mapOf(
+                                            "requestId" to request.id,
+                                            "title" to "Your ambulance Request is ${status.name}!",
+                                            "body" to if (status == AmbulanceRequestStatus.Accepted) "Ambulance will arrive soon!" else "Please place new Request!"
                                         ),
-                                        data = mapOf("requestId" to request.id)
+                                        priority = Priority("high")
                                     )
                                 )
                                 fcmVM.sendPushNotification(notificationReq)

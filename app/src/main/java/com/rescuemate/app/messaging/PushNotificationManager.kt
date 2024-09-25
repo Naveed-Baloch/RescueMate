@@ -12,6 +12,7 @@ import android.util.Log
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.NotificationCompat
+import androidx.core.net.toUri
 import com.google.gson.Gson
 import com.rescuemate.app.MainActivity
 import com.rescuemate.app.R
@@ -28,11 +29,24 @@ class PushNotificationManager @Inject constructor(
     @ApplicationContext val context: Context,
 ) {
     private val notificationID = 123
-    fun showNotification(title: String?, body: String?, data: Map<String, String>) {
+    fun showNotification(data: Map<String, String>) {
+        val title = data["title"]
+        val body = data["body"]
+        val requestId = data["requestId"]
+
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val channelId = "RescueMateChannelId"
         val channelName = "RescueMateChannelName"
         val notificationSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+
+        val activityIntent = Intent(context, MainActivity::class.java).apply {
+            this.data = ("https://rescuemate/$requestId").toUri()
+        }
+        val pendingIntent = TaskStackBuilder.create(context).run {
+            addNextIntentWithParentStack(activityIntent)
+            getPendingIntent(0, PendingIntent.FLAG_IMMUTABLE)
+        }
+
         val notificationBuilder = NotificationCompat.Builder(context, channelId)
             .setContentTitle(title)
             .setContentText(body)
@@ -40,17 +54,7 @@ class PushNotificationManager @Inject constructor(
             .setSmallIcon(R.drawable.ic_ambulance)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setSound(notificationSoundUri)
-            .apply {
-                if(data.isNotEmpty()) {
-                    val intent = Intent(context, MainActivity::class.java).apply {
-                        this.data  = Uri.parse("https://rescuemate/request/id=${data["requestId"]}")
-                        this.putExtra("requestId", data["requestId"])
-                    }
-                    val activity = PendingIntent.getActivity(context, notificationID, intent, PendingIntent.FLAG_IMMUTABLE)
-                    this.setContentIntent(activity)
-                }
-            }
-
+            .setContentIntent(pendingIntent)
 
         // You can customize the notification further based on your requirements
         val channel = NotificationChannel(

@@ -9,8 +9,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -50,14 +50,14 @@ import com.rescuemate.app.extensions.clickableWithOutRipple
 import com.rescuemate.app.extensions.isVisible
 import com.rescuemate.app.extensions.progressBar
 import com.rescuemate.app.extensions.showToast
+import com.rescuemate.app.messaging.Message
+import com.rescuemate.app.messaging.NotificationReq
+import com.rescuemate.app.messaging.Priority
 import com.rescuemate.app.presentation.maps.Permissions
 import com.rescuemate.app.presentation.maps.getAddressFromLatLng
 import com.rescuemate.app.presentation.viewmodel.AmbulanceVM
 import com.rescuemate.app.presentation.viewmodel.FcmVM
 import com.rescuemate.app.presentation.viewmodel.LocationViewModel
-import com.rescuemate.app.messaging.Message
-import com.rescuemate.app.messaging.Notification
-import com.rescuemate.app.messaging.NotificationReq
 import com.rescuemate.app.utils.CityDropDown
 import com.rescuemate.app.utils.CustomEditText
 import com.rescuemate.app.utils.TopBar
@@ -197,12 +197,16 @@ fun AmbulanceRequestScreen(
                                 lng = lng,
                                 address = address,
                                 context = context
-                            ) { ambulanceOwnerToken , requestId ->
+                            ) { ambulanceOwnerToken, requestId ->
                                 val notificationReq = NotificationReq(
                                     message = Message(
                                         token = ambulanceOwnerToken,
-                                        notification = Notification(title = "You have new ambulance request from ${ambulanceVM.user?.name}", body = "At: $address"),
-                                        data = mapOf("requestId" to requestId)
+                                        data = mapOf(
+                                            "requestId" to requestId,
+                                            "title" to "You have new ambulance request from ${ambulanceVM.user?.name}",
+                                            "body" to "At: $address"
+                                        ),
+                                        priority = Priority("high")
                                     )
                                 )
                                 scope.launch {

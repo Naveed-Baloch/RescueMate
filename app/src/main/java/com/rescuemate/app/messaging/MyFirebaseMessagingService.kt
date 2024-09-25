@@ -21,11 +21,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
-        if (message.notification != null) {
-            val title = message.notification?.title
-            val body = message.notification?.body
-            pushNotificationManager.showNotification(title, body, message.data.toMap())
-        }
+        pushNotificationManager.showNotification(message.data.toMap())
     }
 
 }

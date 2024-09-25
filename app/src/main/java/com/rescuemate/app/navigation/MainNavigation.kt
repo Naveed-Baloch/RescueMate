@@ -1,14 +1,19 @@
 package com.rescuemate.app.navigation
 
 import android.content.Context
-import android.content.Intent
 import android.os.Build
-import android.util.Log
-import androidx.activity.ComponentActivity
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -17,7 +22,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
 import com.rescuemate.app.dto.User
-import com.rescuemate.app.extensions.getActivity
 import com.rescuemate.app.extensions.showToast
 import com.rescuemate.app.presentation.SplashScreen
 import com.rescuemate.app.presentation.ambulance.AmbulanceRequestDetailScreen
@@ -35,7 +39,6 @@ import com.rescuemate.app.presentation.laboratory.TestsScreen
 import com.rescuemate.app.presentation.laboratory.LaboratoryRequest
 import com.rescuemate.app.presentation.laboratory.LaboratoryScreen
 import com.rescuemate.app.presentation.viewmodel.UserStorageVM
-import java.util.function.Consumer
 import kotlin.reflect.typeOf
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -44,7 +47,7 @@ fun MainNavigation(navController: NavHostController) {
     val context = LocalContext.current
     NavHost(
         navController = navController,
-        startDestination = getStartDestination(context)
+        startDestination = Routes.SplashScreen
     ) {
         composable<Routes.SplashScreen> {
             SplashScreen(navController)
@@ -112,59 +115,44 @@ fun MainNavigation(navController: NavHostController) {
             AmbulanceRequestsScreen(navController = navController)
         }
 
-        composable<Routes.AmbulanceRequestDetailScreen> { backStackEntry ->
-            val args = backStackEntry.toRoute<Routes.AmbulanceRequestDetailScreen>()
-            AmbulanceRequestDetailScreen(requestId = args.id, navHostController = navController)
+        composable<Routes.AmbulanceRequestDetailScreen>(
+            deepLinks = listOf(navDeepLink<Routes.AmbulanceRequestDetailScreen>(basePath = "https://rescuemate"))
+        ) { backStackEntry ->
+            val requestId = backStackEntry.toRoute<Routes.AmbulanceRequestDetailScreen>().id
+            HandleAmbulanceRequestRoute(requestId, navController, context)
         }
 
     }
-    NewIntentObserver(navController)
+
 }
 
-/**
- * Handle new intent fired by System tray when app is in foreground
- */
 @Composable
-private fun NewIntentObserver(navController: NavHostController, userStorageVM: UserStorageVM = hiltViewModel()) {
-    val context = LocalContext.current
-    val activity = context.getActivity()
-    DisposableEffect(navController) {
-        val listener = { intent: Intent ->
-            val payLoadRequestId = intent.extras?.getString("requestId")
-            if (userStorageVM.getUser() == null) {
-                userStorageVM.setPayloadRequestId(payLoadRequestId)
-                if (navController.currentBackStackEntry?.destination?.route != Routes.SignInScreen::class.qualifiedName) {
-                    navController.navigate(Routes.SignInScreen) {
-                        popUpTo(navController.graph.id)
-                    }
-                }
-                context.showToast("Please, Login First!")
-            } else if (!payLoadRequestId.isNullOrEmpty()) {
-                navController.navigate(Routes.AmbulanceRequestDetailScreen(payLoadRequestId)) {
+private fun HandleAmbulanceRequestRoute(requestId: String, navController: NavHostController, context: Context) {
+    val userStorageVM: UserStorageVM = hiltViewModel()
+    var isLoading by remember { mutableStateOf(true) }
+    LaunchedEffect(key1 = Unit) {
+        if (userStorageVM.getUser() == null) {
+            userStorageVM.setPayloadRequestId(value = requestId)
+            if (navController.currentBackStackEntry?.destination?.route != Routes.SignInScreen::class.qualifiedName) {
+                navController.navigate(Routes.SignInScreen) {
                     popUpTo(navController.graph.id)
                 }
+                isLoading = false
             }
-        }
-        activity?.addOnNewIntentListener(listener)
-        onDispose { activity?.removeOnNewIntentListener(listener) }
-    }
-}
-
-/**
- * handle new intent fired by System tray when app is in background
- */
-@Composable
-private fun getStartDestination(context: Context, userStorageVM: UserStorageVM = hiltViewModel()): Any {
-    val payLoadRequestId = context.getActivity()?.intent?.extras?.getString("requestId")
-    return if (!payLoadRequestId.isNullOrEmpty()) {
-        if (userStorageVM.getUser() == null) {
             context.showToast("Please, Login First!")
-            userStorageVM.setPayloadRequestId(payLoadRequestId)
-            Routes.SignInScreen
-        } else {
-            Routes.AmbulanceRequestDetailScreen(payLoadRequestId)
+        }
+        isLoading = false
+    }
+
+
+    if (isLoading) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
         }
     } else {
-        Routes.SplashScreen
+        AmbulanceRequestDetailScreen(requestId = requestId, navHostController = navController)
     }
 }

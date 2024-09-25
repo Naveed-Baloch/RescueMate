@@ -1,8 +1,6 @@
 package com.rescuemate.app.presentation.ambulance
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.slideInHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -21,15 +19,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -48,22 +41,14 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.rescuemate.app.R
 import com.rescuemate.app.dto.AmbulanceRequest
-import com.rescuemate.app.dto.AmbulanceRequestStatus
 import com.rescuemate.app.dto.mock
 import com.rescuemate.app.extensions.clickableWithOutRipple
 import com.rescuemate.app.extensions.isVisible
 import com.rescuemate.app.extensions.progressBar
-import com.rescuemate.app.extensions.showToast
+import com.rescuemate.app.navigation.Routes
 import com.rescuemate.app.presentation.theme.RescueMateTheme
 import com.rescuemate.app.presentation.viewmodel.AmbulanceVM
-import com.rescuemate.app.presentation.viewmodel.FcmVM
-import com.rescuemate.app.repository.Result
-import com.rescuemate.app.messaging.Message
-import com.rescuemate.app.messaging.Notification
-import com.rescuemate.app.messaging.NotificationReq
-import com.rescuemate.app.navigation.Routes
 import com.rescuemate.app.utils.TopBar
-import kotlinx.coroutines.launch
 
 @Composable
 fun AmbulanceRequestsScreen(
