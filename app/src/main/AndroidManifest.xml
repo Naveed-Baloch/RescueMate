@@ -36,8 +36,8 @@
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data android:scheme="https" />
-                <data android:host="rescuemate" />
-                <data android:host="www.rescuemate" />
+                <data android:host="rescuemate.com" />
+                <data android:host="www.rescuemate.com" />
 
             </intent-filter>
         </activity>

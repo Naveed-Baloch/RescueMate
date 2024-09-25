@@ -40,7 +40,7 @@ class PushNotificationManager @Inject constructor(
         val notificationSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
 
         val activityIntent = Intent(context, MainActivity::class.java).apply {
-            this.data = ("https://rescuemate/$requestId").toUri()
+            this.data = ("https://rescuemate.com/request-details/$requestId").toUri()
         }
         val pendingIntent = TaskStackBuilder.create(context).run {
             addNextIntentWithParentStack(activityIntent)

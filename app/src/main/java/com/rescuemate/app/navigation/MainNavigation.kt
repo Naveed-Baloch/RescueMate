@@ -116,7 +116,7 @@ fun MainNavigation(navController: NavHostController) {
         }
 
         composable<Routes.AmbulanceRequestDetailScreen>(
-            deepLinks = listOf(navDeepLink<Routes.AmbulanceRequestDetailScreen>(basePath = "https://rescuemate"))
+            deepLinks = listOf(navDeepLink<Routes.AmbulanceRequestDetailScreen>(basePath = "https://rescuemate.com/request-details"))
         ) { backStackEntry ->
             val requestId = backStackEntry.toRoute<Routes.AmbulanceRequestDetailScreen>().id
             HandleAmbulanceRequestRoute(requestId, navController, context)
